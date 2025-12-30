@@ -41,16 +41,16 @@ function App() {
   });
   alert("User Login Successful!")
 }
-
+  // user interface basic
   return (
-    <>
+    <div style={{ padding: 40 }}>
       <h1>Passwordless Authentiction System</h1>
-      <div className="card">
-        <p>
-          it's great becuase it replaces passwords!!!
-        </p>
+      <input placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
+      <br></br>
+      <button onClick={register}>Register a Passkey</button>
+      <br /><br />
+      <button onClick={login}>Login with the Passkey</button>
       </div>
-    </>
   )
 }
 
