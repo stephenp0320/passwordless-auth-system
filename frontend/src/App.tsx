@@ -17,8 +17,8 @@ function App() {
     const credentials = await startRegistration(options);
     await fetch("http://localhost:5000/register/finish", {
       method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ username, credentials }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, credential: credentials }),
     });
     alert("Registration Successful!")
   };

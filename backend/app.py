@@ -6,15 +6,16 @@ from fido2.utils import websafe_decode
 #https://github.com/Yubico/python-fido2
 # https://www.geeksforgeeks.org/python/flask-creating-first-simple-application/
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=["http://localhost:5173"])
+
 
 # fido setup
-responce = PublicKeyCredentialRpEntity(
+rp = PublicKeyCredentialRpEntity(
     id = "localhost",
     name = "Passwordless authenticaiton"
 )
 
-server = Fido2Server(responce)
+server = Fido2Server(rp)
 
 # temporary storage 
 USERS = {}
@@ -26,8 +27,11 @@ def root():
     return {"message" : "backend is running"}
 
 # register start endpoint
-@app.post("/register/start")
+@app.route("/register/start", methods=["POST", "OPTIONS"])
 def register_start():
+    if request.method == "OPTIONS":
+        return "", 200
+    
     username = request.json["username"]
     
     user  = PublicKeyCredentialUserEntity(
@@ -48,8 +52,11 @@ def register_start():
     return jsonify(options)
 
 # register finish endpoint 
-@app.post("/register/finish")
+@app.route("/register/finish", methods=["POST", "OPTIONS"])
 def register_finish():
+    if request.method == "OPTIONS":
+        return "", 200
+    
     username = request.json["username"]
     credential = request.json["credential"]
     authentication_data = server.register_complete(
@@ -63,8 +70,11 @@ def register_finish():
     return {"status" : "registered"}
 # https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API
 # login start endpoint
-@app.post("/login/start")
+@app.route("/login/start", methods=["POST", "OPTIONS"])
 def login_start():
+    if request.method == "OPTIONS":
+        return "", 200
+    
     username = request.json["username"]
     creds = CREDENTIALS.get(username)
     
@@ -79,8 +89,11 @@ def login_start():
     return jsonify(options)
 
 # login finish endpoint
-@app.post("/login/finish")
+@app.route("/login/finish", methods=["POST", "OPTIONS"])
 def login_finish():
+    if request.method == "OPTIONS":
+        return "", 200
+    
     username = request.json["username"] # username + auth responce retrieved
     credential = request.json["credential"]
     creds = CREDENTIALS.get(username) # stored credential fetch
