@@ -10,7 +10,7 @@ CORS(app)
 
 # fido setup
 responce = PublicKeyCredentialRpEntity(
-    id = "Localhost",
+    id = "localhost",
     name = "Passwordless authenticaiton"
 )
 
@@ -39,7 +39,7 @@ def register_start():
     options, state = server.register_begin(
         user,
         credentials=[],
-        user_verification="preffered",
+        user_verification="preferred",
     )
     
     USERS[username] = user
@@ -51,11 +51,11 @@ def register_start():
 @app.post("/register/finish")
 def register_finish():
     username = request.json["username"]
-    credential = request.json["username"]
+    credential = request.json["credential"]
     authentication_data = server.register_complete(
-        USERS[username],
         STATES[username],
-        websafe_decode(credential["id"]),
+        USERS[username],
+        websafe_decode(credential["rawId"]),
         credential
     )
     
@@ -88,7 +88,7 @@ def login_finish():
     server.authenticate_complete( # validates cryptographic signature
         STATES[username],
         [creds.credential_data],
-        websafe_decode(credential["id"]),
+        websafe_decode(credential["rawId"]),
         credential,
     )
     
