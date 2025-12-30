@@ -3,7 +3,7 @@ from flask_cors import CORS
 from fido2.webauthn import PublicKeyCredentialRpEntity, PublicKeyCredentialUserEntity
 from fido2.server import Fido2Server
 from fido2.utils import websafe_decode
-
+#https://github.com/Yubico/python-fido2
 # https://www.geeksforgeeks.org/python/flask-creating-first-simple-application/
 app = Flask(__name__)
 CORS(app)
@@ -78,6 +78,22 @@ def login_start():
     )
     STATES[username] = state
     return jsonify(options)
+
+# login finish endpoint
+app.post("/login/finish")
+def login_finish():
+    username = request.json["username"] # username + auth responce retrieved
+    credential = request.json["credential"]
+    creds = CREDENTIALS.get(username) # stored credential fetch
+    
+    server.authenticate_complete( # validates cryptographic signature
+        STATES[username],
+        [creds.credential_data],
+        websafe_decode(credential["id"]),
+        credential,
+    )
+    
+    return {"status" : "authenticated"}
 
 
 if __name__ == "__main__":
