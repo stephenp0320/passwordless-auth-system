@@ -63,6 +63,21 @@ def register_finish():
     CREDENTIALS[username] = authentication_data
     return {"status" : "registered"}
 
+app.post("/login/start")
+def login_start():
+    username = request.json["username"]
+    creds = CREDENTIALS.get(username)
+    
+    if not creds:
+        return {"error" : "user is not registered"}, 404
+    
+    options, state = server.authenticate_begin(
+        [creds.credential_data],
+        user_verification="preferred",
+    )
+    STATES[username] = state
+    return jsonify(options)
+
 
 if __name__ == "__main__":
     app.run(debug=True)
