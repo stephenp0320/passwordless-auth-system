@@ -8,6 +8,9 @@ from fido2.utils import websafe_decode
 app = Flask(__name__)
 CORS(app, origins=["http://localhost:5173"])
 
+@app.before_request
+def log_request():
+    print("INCOMING:", request.method, request.path)
 
 # fido setup
 rp = PublicKeyCredentialRpEntity(
@@ -27,10 +30,8 @@ def root():
     return {"message" : "backend is running"}
 
 # register start endpoint
-@app.route("/register/start", methods=["POST", "OPTIONS"])
+@app.route("/register/start", methods=["POST"])
 def register_start():
-    if request.method == "OPTIONS":
-        return "", 200
     
     username = request.json["username"]
     
@@ -49,13 +50,11 @@ def register_start():
     USERS[username] = user
     STATES[username] = state
 
-    return jsonify(options)
+    return jsonify(options.to_json())
 
 # register finish endpoint 
-@app.route("/register/finish", methods=["POST", "OPTIONS"])
+@app.route("/register/finish", methods=["POST"])
 def register_finish():
-    if request.method == "OPTIONS":
-        return "", 200
     
     username = request.json["username"]
     credential = request.json["credential"]
@@ -70,10 +69,8 @@ def register_finish():
     return {"status" : "registered"}
 # https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API
 # login start endpoint
-@app.route("/login/start", methods=["POST", "OPTIONS"])
+@app.route("/login/start", methods=["POST"])
 def login_start():
-    if request.method == "OPTIONS":
-        return "", 200
     
     username = request.json["username"]
     creds = CREDENTIALS.get(username)
@@ -86,13 +83,11 @@ def login_start():
         user_verification="preferred",
     )
     STATES[username] = state
-    return jsonify(options)
+    return jsonify(options.to_json())
 
 # login finish endpoint
-@app.route("/login/finish", methods=["POST", "OPTIONS"])
+@app.route("/login/finish", methods=["POST"])
 def login_finish():
-    if request.method == "OPTIONS":
-        return "", 200
     
     username = request.json["username"] # username + auth responce retrieved
     credential = request.json["credential"]
@@ -109,6 +104,5 @@ def login_finish():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
-
+    app.run(host="localhost", port=5000, debug=True)
         
