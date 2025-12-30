@@ -20,6 +20,10 @@ USERS = {}
 CREDENTIALS = {}
 STATES = {}
 
+app.get("/")
+
+def root():
+    return {"message" : "backend is running"}
 
 
     
