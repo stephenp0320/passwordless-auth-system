@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from fido2.webauthn import PublicKeyCredentialRpEntity, PublicKeyCredentialUserEntity
 from fido2.server import Fido2Server
+from fido2.utils import websafe_decode
 
 # https://www.geeksforgeeks.org/python/flask-creating-first-simple-application/
 app = Flask(__name__)
@@ -25,9 +26,10 @@ app.get("/")
 def root():
     return {"message" : "backend is running"}
 
+# register start endpoint
 app.post("/register/start")
 def register_start():
-    username = request.json ["username"]
+    username = request.json["username"]
     
     user  = PublicKeyCredentialUserEntity(
         id = username.encode(),
@@ -45,7 +47,23 @@ def register_start():
     STATES[username] = state
 
     return jsonify(options)
+
+# register finish endpoint 
+app.post("/register/finish")
+def register_finish():
+    username = request.json["username"]
+    credential = request.json["username"]
+    authentication_data = server.register_complete(
+        USERS[username],
+        STATES[username],
+        websafe_decode(credential["id"]),
+        credential
+    )
     
+    CREDENTIALS[username] = authentication_data
+    return {"status" : "registered"}
+
+
 if __name__ == "__main__":
     app.run(debug=True)
 
