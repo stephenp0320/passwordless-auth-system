@@ -15,6 +15,13 @@ responce = PublicKeyCredentialRpEntity(
 
 server = Fido2Server(responce)
 
+# temporary storage 
+USERS = {}
+CREDENTIALS = {}
+STATES = {}
+
+
+
     
 if __name__ == "__main__":
     app.run(debug=True)
