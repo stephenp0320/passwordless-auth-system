@@ -62,7 +62,8 @@ def register_finish():
     
     CREDENTIALS[username] = authentication_data
     return {"status" : "registered"}
-
+# https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API
+# login start endpoint
 app.post("/login/start")
 def login_start():
     username = request.json["username"]
