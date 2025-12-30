@@ -21,13 +21,12 @@ USERS = {}
 CREDENTIALS = {}
 STATES = {}
 
-app.get("/")
-
+@app.get("/")
 def root():
     return {"message" : "backend is running"}
 
 # register start endpoint
-app.post("/register/start")
+@app.post("/register/start")
 def register_start():
     username = request.json["username"]
     
@@ -49,7 +48,7 @@ def register_start():
     return jsonify(options)
 
 # register finish endpoint 
-app.post("/register/finish")
+@app.post("/register/finish")
 def register_finish():
     username = request.json["username"]
     credential = request.json["username"]
@@ -64,7 +63,7 @@ def register_finish():
     return {"status" : "registered"}
 # https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API
 # login start endpoint
-app.post("/login/start")
+@app.post("/login/start")
 def login_start():
     username = request.json["username"]
     creds = CREDENTIALS.get(username)
@@ -80,7 +79,7 @@ def login_start():
     return jsonify(options)
 
 # login finish endpoint
-app.post("/login/finish")
+@app.post("/login/finish")
 def login_finish():
     username = request.json["username"] # username + auth responce retrieved
     credential = request.json["credential"]
