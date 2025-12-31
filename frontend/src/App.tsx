@@ -1,60 +1,135 @@
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
 import { useState } from 'react';
-//https://simplewebauthn.dev/docs/packages/browser
+import './App.css';
+
+// https://simplewebauthn.dev/docs/packages/browser
+// https://react.dev/reference/react/useState
 function App() {
   const [username, setUsername] = useState("")
-  // passkey registrtion flow
-  //https://simplewebauthn.dev/docs/packages/browser
+  const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' })
+  const [isLoading, setIsLoading] = useState(false)
 
+  // Passkey registration flow
   const register = async () => {
-    const response = await fetch("http://localhost:5001/register/start", {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ username }),
-    });
+    if (!username.trim()) {
+      setStatus({ message: 'Please enter a username', type: 'error' })
+      return
+    }
+    
+    setIsLoading(true)
+    setStatus({ message: '', type: '' })
+    
+    try {
+      // Fetch registration options from server
+      // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
+      const response = await fetch("http://localhost:5001/register/start", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
 
-    const options = await response.json();
-    console.log("Options received:", options);
-    const credentials = await startRegistration(options.publicKey);
-    await fetch("http://localhost:5001/register/finish", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, credential: credentials }),
-    });
-    alert("Registration Successful!")
+      const options = await response.json();
+      console.log("Options received:", options);
+      // Trigger browser's WebAuthn credential creation
+      // https://simplewebauthn.dev/docs/packages/browser#startregistration
+      const credentials = await startRegistration(options.publicKey);
+      
+      await fetch("http://localhost:5001/register/finish", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, credential: credentials }),
+      });
+      
+      setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
+    } catch (error) {
+      console.error(error)
+      setStatus({ message: 'Registration failed. Please try again.', type: 'error' })
+    } finally {
+      setIsLoading(false)
+    }
   };
-  // passwordless login flow
 
+  // Passwordless login flow
   const login = async () => {
-    const responce = await fetch("http://localhost:5001/login/start", {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ username }),
-    });
+    if (!username.trim()) {
+      setStatus({ message: 'Please enter a username', type: 'error' })
+      return
+    }
+    
+    setIsLoading(true)
+    setStatus({ message: '', type: '' })
+    
+    try {
+      // Fetch authentication options from server
+      const response = await fetch("http://localhost:5001/login/start", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ username }),
+      });
 
-    const options = await responce.json();
-    console.log("Login options received:", options);
-    const assertion = await startAuthentication(options.publicKey);
+      if (!response.ok) {
+        throw new Error('User not registered')
+      }
 
-    await fetch("http://localhost:5001/login/finish", {
-      method: "POST",
-      headers: { "Content-type": "application/json" },
-      body: JSON.stringify({ username , credential: assertion}),
-  });
-  alert("User Login Successful!")
-}
-  // user interface basic
+      const options = await response.json();
+      console.log("Login options received:", options);
+
+      //Trigger browser's WebAuthn authentication
+      //https://simplewebauthn.dev/docs/packages/browser#startauthentication
+      const assertion = await startAuthentication(options.publicKey);
+
+      // Send assertion to server for verification
+      await fetch("http://localhost:5001/login/finish", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ username, credential: assertion }),
+      });
+      
+      setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
+    } catch (error) {
+      console.error(error)
+      setStatus({ message: 'Login failed. Make sure you are registered.', type: 'error' })
+    } finally {
+      setIsLoading(false)
+    }
+  };
+
+  //UI Component
+  //https://react.dev/learn/writing-markup-with-jsx
   return (
-    <div style={{ padding: 40 }}>
-      <h1>Passwordless Authentiction System</h1>
-      <input placeholder="username" value={username} onChange={(e) => setUsername(e.target.value)}/>
-      <br></br>
-      <button onClick={register}>Register a Passkey</button>
-      <br /><br />
-      <button onClick={login}>Login with the Passkey</button>
+    <div className="container">
+      <div className="card">
+        <div className="icon">🔐</div>
+        <h1>Passwordless Auth</h1>
+        <p className="subtitle">Secure authentication using passkeys</p>
+        
+        <div className="form">
+          <input
+            type="text"
+            placeholder="Enter username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            disabled={isLoading}
+          />
+          
+          <div className="buttons">
+            <button onClick={register} disabled={isLoading} className="btn-primary">
+              {isLoading ? 'Please wait...' : 'Register Passkey'}
+            </button>
+            <button onClick={login} disabled={isLoading} className="btn-secondary">
+              {isLoading ? 'Please wait...' : 'Login'}
+            </button>
+          </div>
+        </div>
+
+        {status.message && (
+          <div className={`status ${status.type}`}>
+            {status.message}
+          </div>
+        )}
       </div>
+    </div>
   )
 }
-
 
 export default App
