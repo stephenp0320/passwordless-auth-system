@@ -7,15 +7,16 @@ function App() {
   //https://simplewebauthn.dev/docs/packages/browser
 
   const register = async () => {
-    const response = await fetch("http://localhost:5000/register/start", {
+    const response = await fetch("http://localhost:5001/register/start", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ username }),
     });
 
     const options = await response.json();
-    const credentials = await startRegistration(options);
-    await fetch("http://localhost:5000/register/finish", {
+    console.log("Options received:", options);
+    const credentials = await startRegistration(options.publicKey);
+    await fetch("http://localhost:5001/register/finish", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, credential: credentials }),
@@ -25,16 +26,17 @@ function App() {
   // passwordless login flow
 
   const login = async () => {
-    const responce = await fetch("http://localhost:5000/login/start", {
+    const responce = await fetch("http://localhost:5001/login/start", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ username }),
     });
 
     const options = await responce.json();
-    const assertion = await startAuthentication(options);
+    console.log("Login options received:", options);
+    const assertion = await startAuthentication(options.publicKey);
 
-    await fetch("http://localhost:5000/login/finish", {
+    await fetch("http://localhost:5001/login/finish", {
       method: "POST",
       headers: { "Content-type": "application/json" },
       body: JSON.stringify({ username , credential: assertion}),
