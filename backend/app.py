@@ -21,10 +21,9 @@ def log_request():
 
 @app.after_request
 def after_request(response):
-    """
-    Ensure CORS headers are set on all responses
-    Reference: https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    """
+    #Ensure CORS headers are set on all responses
+    #https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+    
     response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
@@ -199,15 +198,10 @@ def login_start():
 # https://simplewebauthn.dev/docs/packages/server/verifyAuthenticationResponse
 @app.route("/login/finish", methods=["POST"])
 def login_finish():
-    """
-
+    # This endpoint verifies the authenticator's assertion response to authenticate the user.
+    #https://www.w3.org/TR/webauthn-2/#sctn-verifying-assertion
+    #https://simplewebauthn.dev/docs/packages/server/verifyAuthenticationResponse
     
-    # This endpoint verifies the authenticator's assertion response to
-    # authenticate the user.
-    
-    # Reference: https://www.w3.org/TR/webauthn-2/#sctn-verifying-assertion
-    # Reference: https://simplewebauthn.dev/docs/packages/server/verifyAuthenticationResponse
-    """
     try:
         username = request.json["username"]
         credential = request.json["credential"]
