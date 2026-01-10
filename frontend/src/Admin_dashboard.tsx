@@ -36,6 +36,33 @@ function Admin() {
     }
 
 
+    const revoke_credential = async (username : string) => {
+        const answer = confirm(`Are you sure you want to revoke credentials for ${username} `)
+        if (!answer) {
+            return;
+        }
+
+        try {
+            const responce = await fetch("http://localhost:5001/admin/revoke", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username }),
+            });
+
+            if (!responce.ok){
+                throw new Error(`Credential revoked failed for ${username}`);
+            }
+            setStatus({ message: `Credential Revoked for ${username}`, type: 'success' });
+            fetch_registered_users() //refresh users
+        } catch (error) {
+            console.log(error)
+            setStatus({ message: `Failed to revoke credential for ${username}`, type: 'error' });
+
+        }
+
+    };
+
+
 
 
 }
