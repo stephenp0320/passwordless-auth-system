@@ -62,7 +62,22 @@ function Admin() {
 
     };
 
+    return (
+        <div className="container">
+          <div className="card">
+            <div className="icon">🔐</div>
+            <h1>Admin Dashboard</h1>
+            <p className="subtitle">Manage registered users and credentials</p>
 
+            {status.message && (
+                <div className={`status ${status.type}`}>
+                    {status.message}
+                </div>
+        )}
+            </div>
+    
+          </div>
+      )
+    }
 
-
-}
+export default Admin;
