@@ -42,6 +42,8 @@ server = Fido2Server(rp)
 USERS = {}
 CREDENTIALS = {}
 STATES = {}
+#dict to track registration times
+REGISTRATION_TIMES = {}
 
 @app.get("/")
 def root():
