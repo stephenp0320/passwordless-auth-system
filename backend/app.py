@@ -252,7 +252,26 @@ def get_users():
         print(f"Error in get_users endpoint", {e})
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+# revoke credentials endpoint
+@app.route("/admin/revoke", methods=["DELETE"])
+def revoke_credentials():    
+    try:
+        usr = request.json["username"]
         
+        if usr not in CREDENTIALS:
+            return jsonify({"ERROR" : f"{usr} was not found"}), 404
+        
+        CREDENTIALS.pop(usr, None)
+        USERS.pop(usr, None)
+        STATES.pop(usr, None)
+        return jsonify({"status": "revoked", "username": usr})
+    
+    except Exception as e:
+        print(f"Error in revoke_credentials endpoint", {e})
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+
 
 
 if __name__ == "__main__":
