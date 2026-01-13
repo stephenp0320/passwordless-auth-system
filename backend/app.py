@@ -239,6 +239,19 @@ def login_finish():
         import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+    
+@app.route("/admin/users", methods=["POST"])
+def get_users():    
+    users = []
+    
+    for usr in CREDENTIALS.keys():
+        users.append({
+            "username" : usr,
+            "registered_at" : REGISTRATION_TIMES.get(usr),
+            "credential_id" : CREDENTIALS.get(usr),
+        })
+    return jsonify({"users" : users})
 
 
 if __name__ == "__main__":
