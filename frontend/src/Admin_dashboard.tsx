@@ -74,6 +74,10 @@ function Admin() {
                     {status.message}
                 </div>
         )}
+        {/* Credential refresh button */}
+        <button className='btn-refresh' onClick={fetch_registered_users}>
+            Refresh list of credentials
+        </button>
             </div>
     
           </div>
