@@ -10,19 +10,19 @@ function Admin() {
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
-  
+
     // Fetch users on component mount
     // Reference: https://react.dev/reference/react/useEffect
     useEffect(() => {
         fetch_registered_users();
     }, []);
 
- // https://www.geeksforgeeks.org/typescript/how-to-use-fetch-in-typescript/
+    // https://www.geeksforgeeks.org/typescript/how-to-use-fetch-in-typescript/
     const fetch_registered_users = async () => {
         setIsLoading(true);
         try {
             const responce = await fetch("http://localhost:5001/admin/users");
-            if (!responce.ok){
+            if (!responce.ok) {
                 throw new Error('failed to fetch registered user');
             }
             const data = await responce.json();
@@ -36,7 +36,7 @@ function Admin() {
     }
 
 
-    const revoke_credential = async (username : string) => {
+    const revoke_credential = async (username: string) => {
         const answer = confirm(`Are you sure you want to revoke credentials for ${username} `)
         if (!answer) {
             return;
@@ -49,7 +49,7 @@ function Admin() {
                 body: JSON.stringify({ username }),
             });
 
-            if (!responce.ok){
+            if (!responce.ok) {
                 throw new Error(`Credential revoked failed for ${username}`);
             }
             setStatus({ message: `Credential Revoked for ${username}`, type: 'success' });
@@ -62,26 +62,61 @@ function Admin() {
 
     };
 
+    let content;
+
+    if (isLoading) {
+        content = <p className="loading">Loading users...</p>;
+    } else {
+        content = <table className="users-table">{
+            <table className="users-table">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {/* loops and transforms each item in users */}
+                    {users.map((user) => (
+                        <tr key={user.username}>
+                            <td>{user.username}</td>
+                            <td>{user.registered_at}</td>
+                            <td>
+                                {/* revoke btn */}
+                                <button className="btn-revoke" onClick={() => revoke_credential(user.username)}>
+                                    Revoke
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        }</table>;
+    }
+
     return (
         <div className="container">
-          <div className="card">
-            <div className="icon">🔐</div>
-            <h1>Admin Dashboard</h1>
-            <p className="subtitle">Manage registered users and credentials</p>
+            <div className="card">
+                <div className="icon">🔐</div>
+                <h1>Admin Dashboard</h1>
+                <p className="subtitle">Manage registered users and credentials</p>
 
-            {status.message && (
-                <div className={`status ${status.type}`}>
-                    {status.message}
-                </div>
-        )}
-        {/* Credential refresh button */}
-        <button className='btn-refresh' onClick={fetch_registered_users}>
-            Refresh list of credentials
-        </button>
+                {status.message && (
+                    <div className={`status ${status.type}`}>
+                        {status.message}
+                    </div>
+                )}
+                {/* content logic added */}
+                {content}
+                {/* Credential refresh button */}
+                <button className='btn-refresh' onClick={fetch_registered_users}>
+                    Refresh list of credentials
+                </button>
             </div>
-    
-          </div>
-      )
-    }
+
+        </div>
+    )
+}
 
 export default Admin;
