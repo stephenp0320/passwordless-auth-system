@@ -4,7 +4,7 @@ from fido2.webauthn import PublicKeyCredentialRpEntity, PublicKeyCredentialUserE
 from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
 from types import MappingProxyType
-
+import traceback
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -120,7 +120,6 @@ def register_start():
         return jsonify(options_dict)
     except Exception as e:
         print(f"ERROR in register_start: {e}")
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
@@ -161,7 +160,6 @@ def register_finish():
         return {"status": "registered"}
     except Exception as e:
         print(f"ERROR in register_finish: {e}")
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
@@ -190,7 +188,6 @@ def login_start():
         return jsonify(options_dict)
     except Exception as e:
         print(f"ERROR in login_start: {e}")
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
@@ -236,22 +233,26 @@ def login_finish():
         return {"status": "authenticated"}
     except Exception as e:
         print(f"ERROR in login_finish: {e}")
-        import traceback
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
     
-    
-@app.route("/admin/users", methods=["POST"])
+# get users endpoint
+@app.route("/admin/users", methods=["GET"])
 def get_users():    
-    users = []
-    
-    for usr in CREDENTIALS.keys():
-        users.append({
-            "username" : usr,
-            "registered_at" : REGISTRATION_TIMES.get(usr),
-            "credential_id" : CREDENTIALS.get(usr),
-        })
-    return jsonify({"users" : users})
+    try:
+        users = []
+        for usr in CREDENTIALS.keys():
+            users.append({
+                "username" : usr,
+                "registered_at" : REGISTRATION_TIMES.get(usr),
+                "credential_id" : CREDENTIALS.get(usr),
+            })
+        return jsonify({"users" : users})
+    except Exception as e:
+        print(f"Error in get_users endpoint", {e})
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+        
 
 
 if __name__ == "__main__":
