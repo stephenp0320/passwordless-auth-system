@@ -230,10 +230,14 @@ def login_finish():
             "clientExtensionResults": credential.get("clientExtensionResults", {}),
         }
         
+        
+        cred_data_list = [crd.credential_data for crd in creds]
+
+        
         # Verify the authentication response
         server.authenticate_complete(
             STATES[username],
-            [creds.credential_data],
+            cred_data_list,
             authentication_response,
         )
         
