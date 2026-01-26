@@ -245,7 +245,7 @@ def get_users():
             users.append({
                 "username" : usr,
                 "registered_at" : REGISTRATION_TIMES.get(usr),
-                "credential_id" : CREDENTIALS.get(usr),
+                "credential_id" : str(CREDENTIALS.get(usr)),
             })
         return jsonify({"users" : users})
     except Exception as e:
