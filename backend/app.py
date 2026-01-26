@@ -155,7 +155,13 @@ def register_finish():
         )
         
         # Store credential for future authentication
-        CREDENTIALS[username] = auth_data
+        # if a user does not exist, create an empty list 
+        if username not in CREDENTIALS:
+            CREDENTIALS[username] = []
+        # add new credentials to the list 
+        CREDENTIALS[username].append(auth_data)
+        
+        
         print(f"User {username} registered successfully!")
         return {"status": "registered"}
     except Exception as e:
