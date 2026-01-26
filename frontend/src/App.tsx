@@ -1,6 +1,8 @@
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
 import { useState } from 'react';
 import './App.css';
+import { useNavigate } from 'react-router-dom';
+
 
 // https://simplewebauthn.dev/docs/packages/browser
 // https://react.dev/reference/react/useState
@@ -8,6 +10,9 @@ function App() {
   const [username, setUsername] = useState("")
   const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' })
   const [isLoading, setIsLoading] = useState(false)
+
+  const navigate = useNavigate();
+
 
   // Passkey registration flow
   const register = async () => {
@@ -86,6 +91,7 @@ function App() {
       });
       
       setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
+      navigate('/admin') // naviagtes to the admin screen
     } catch (error) {
       console.error(error)
       setStatus({ message: 'Login failed. Make sure you are registered.', type: 'error' })

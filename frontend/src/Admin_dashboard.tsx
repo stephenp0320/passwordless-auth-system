@@ -44,7 +44,7 @@ function Admin() {
 
         try {
             const responce = await fetch("http://localhost:5001/admin/revoke", {
-                method: "POST",
+                method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username }),
             });
