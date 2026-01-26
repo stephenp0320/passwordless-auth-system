@@ -182,10 +182,12 @@ def login_start():
         if not creds:
             return {"error": "user is not registered"}, 404
         
+        cred_data_list = [crd.credential_data for crd in creds]
+        
         # Generate authentication options with allowed credentials
         # https://www.w3.org/TR/webauthn-2/#dictdef-publickeycredentialrequestoptions
         options, state = server.authenticate_begin(
-            [creds.credential_data],
+            cred_data_list,
             user_verification="preferred",
         )
         STATES[username] = state
