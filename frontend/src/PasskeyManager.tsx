@@ -43,4 +43,33 @@ function PasskeyManager({username} : PasskeyManageProps) {
             setIsLoading(false)
         }
     };
+
+    const delete_user_passkey = async (passkeyId:number) => {
+        const confirmed = confirm("Are you sure you would like to delete this passkey?")
+        // finish if they dont want to delete passkey
+        if (!confirmed){
+            return 
+        }
+
+        try {
+            const responce = await fetch(`http://localhost:5001/user/passkeys/${passkeyId}`, {
+                method:"DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username}),
+            })
+
+            if(!responce.ok){
+                const data = await responce.json()
+                throw new Error(data.error || "Error deleting selected passkey")
+            }
+
+            setStatus({message: "Passkey deleted succesfully", type: "success"})
+            // refresh users passkeys 
+            fetch_user_passkeys()
+        } catch(error){
+            console.log('Issue fetching passkeys:', error)
+            setStatus({message: "Error loading passkeys", type: "error"})
+        }
+        
+    };
 }
