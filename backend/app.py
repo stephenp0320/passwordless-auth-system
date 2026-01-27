@@ -109,6 +109,7 @@ def register_start():
             user,
             credentials=[],
             user_verification="preferred",
+            resident_key_requirement="required", # enables discoverable credentials
         )
         
         # Store user and state for the completion step
