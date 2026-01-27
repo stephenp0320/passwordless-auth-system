@@ -5,6 +5,7 @@ from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
 from types import MappingProxyType
 import traceback
+from datetime import datetime
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -160,6 +161,8 @@ def register_finish():
             CREDENTIALS[username] = []
         # add new credentials to the list 
         CREDENTIALS[username].append(auth_data)
+        REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
+
         
         
         print(f"User {username} registered successfully!")
