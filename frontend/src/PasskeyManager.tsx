@@ -109,6 +109,31 @@ function PasskeyManager({username} : PasskeyManageProps) {
         );
     }
 
+    // passkey manager card
+    return (
+        <div className="container">
+            <div className="card">
+                <div className="icon">🔑</div>
+                <h1>My Passkeys</h1>
+                <p className="subtitle">Manage your registered passkeys</p>
+
+                {status.message && (
+                    <div className={`status ${status.type}`}>
+                        {status.message}
+                    </div>
+                )}
+
+                {content}
+
+                <button className="btn-refresh" onClick={fetch_user_passkeys}>
+                    Refresh
+                </button>
+            </div>
+        </div>
+    );
+
+}
+
     
 
 export default PasskeyManager;
