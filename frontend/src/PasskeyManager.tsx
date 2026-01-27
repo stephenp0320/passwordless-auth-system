@@ -72,4 +72,43 @@ function PasskeyManager({username} : PasskeyManageProps) {
         }
         
     };
-}
+
+    let content;
+
+    if (isLoading){
+        content = <p className="loading">Loading passkeys...</p>;
+    } else if (Passkey.length === 0){
+        content = <p>No passkeys are registered</p>
+    } else {
+        content = (
+            <table className="users-table">
+                <thead>
+                    <tr>
+                        <th>Passkey ID</th>
+                        <th>Registered</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {Passkey.map((passkey) => (
+                        <tr key={passkey.id}>
+                            <td>{passkey.credential_id.substring(0, 16)}...</td>
+                            <td>{passkey.registered_at}</td>
+                            <td> 
+                                <button 
+                                    className="btn-revoke" 
+                                    onClick={() => delete_user_passkey(passkey.id)}
+                                    disabled={Passkey.length === 1}>
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        );
+    }
+
+    
+
+export default PasskeyManager;
