@@ -257,8 +257,9 @@ def get_users():
             users.append({
                 "username" : usr,
                 "registered_at" : REGISTRATION_TIMES.get(usr),
-                "credential_id" : str(CREDENTIALS.get(usr)),
+                "credential_count" : len(CREDENTIALS.get(usr, [])),
             })
+            
         return jsonify({"users" : users})
     except Exception as e:
         print(f"Error in get_users endpoint", {e})
@@ -284,6 +285,29 @@ def revoke_credentials():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
 
+
+# get user passkeys endpoint
+@app.route("/user/passkeys", methods=["POST"])
+def get_user_passkeys(): 
+    try:
+        usr = request.json["username"]
+        creds = CREDENTIALS.get(usr, [])
+        
+        passkeys = []
+        # append all user specific passkeys 
+        for i, cred in enumerate(creds):
+            passkeys.append({
+                "id" : i,
+                "credential_id" : str(cred.credential_data.credential_id.hex()),
+                "registered_at" : REGISTRATION_TIMES.get(f"{usr} - {i}")  
+            })
+            
+            return jsonify({"passkeys" : passkeys})
+        
+    except Exception as e:
+        print(f"Error in get_user_passkeys for {usr}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":
