@@ -308,7 +308,34 @@ def get_user_passkeys():
         print(f"Error in get_user_passkeys for {usr}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+    
+# delete user specific passkey
+@app.route("/user/passkeys/<int:passkey_id>", methods=["DELETE"])
+def delete_user_passkey(passkey_id):
+    try:
+        usr = request.json["username"]
+        creds = CREDENTIALS.get(usr, [])
+        
+        if not creds:
+            return jsonify({f"Error {usr} not found"}), 404
+        
+        if passkey_id < 0 or passkey_id >= len(creds):
+            return jsonify({"Error passkey not found"}), 404
+        # ensures that there is atleast one passkey always
+        if len(passkey_id == 0):
+            return jsonify({"Error cannot delete last passkey, register another device first!"}), 404
+        # remove the credential 
+        CREDENTIALS[usr].pop(passkey_id)
+        
+        print(f"Passkey deleted: {passkey_id} for user: {usr}")
+        return jsonify({"status": "deleted", "passkey_id": passkey_id})
+    except Exception as e:
+        print(f"Error in delete_user_passkey")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
 
+
+    
 
 if __name__ == "__main__":
     # https://flask.palletsprojects.com/en/stable/server/
