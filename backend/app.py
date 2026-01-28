@@ -339,6 +339,27 @@ def delete_user_passkey(passkey_id):
         return jsonify({"error": str(e)}), 500
 
 
+# usernameless login start endpoint
+# login without username using discoverable creds
+@app.route("/login/start/usernameless", methods=["POST"])
+def login_start_usernameless():
+    try:
+        options, state = server.authenticate_begin(
+            creds = [], # empty for browser to show available passkeys
+            user_verification='required',       
+        )
+        
+        #states are stored using temporary keys
+        STATES["_usernameless_"] = state 
+        opt_dict = serialize_options(options) 
+        return jsonify(opt_dict)
+    
+    except Exception as e:
+        print(f"Error in login_start_usernameless")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+        
+    
     
 
 if __name__ == "__main__":
