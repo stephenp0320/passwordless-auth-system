@@ -170,10 +170,15 @@ function App() {
               {isLoading ? 'Please wait...' : 'Register Passkey'}
             </button>
             <button onClick={login} disabled={isLoading} className="btn-secondary">
-              {isLoading ? 'Please wait...' : 'Login'}
+              {isLoading ? 'Please wait...' : 'Login with username'}
+            </button>
+            <button onClick={usernamelessLogin} disabled={isLoading} className="btn-secondary">
+              {isLoading ? 'Please wait...' : 'Login with Passkey'}
             </button>
           </div>
         </div>
+
+
 
         {status.message && (
           <div className={`status ${status.type}`}>
