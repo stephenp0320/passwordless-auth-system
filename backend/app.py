@@ -160,18 +160,28 @@ def register_finish():
             registration_response
         )
         
-        # Store credential for future authentication
-        # if a user does not exist, create an empty list 
-        if username not in CREDENTIALS:
+        is_new_usr = username not in CREDENTIALS
+        
+        if is_new_usr:
             CREDENTIALS[username] = []
-        # add new credentials to the list 
+            
+            
         CREDENTIALS[username].append(auth_data)
         REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-        
-        
+        recovery_codes = None
+        if is_new_usr:
+            recovery_codes = Recovery_code_generator(8)
+            # store hashed codes in RECOVERY_CODES dict
+            RECOVERY_CODES[username] = [hashcode(code) for code in recovery_codes]
+            
         print(f"User {username} registered successfully!")
-        return {"status": "registered"}
+        
+        return jsonify({
+            "status": "registered",
+            "recovery_codes": recovery_codes  # sends on first registration attempt
+        })
+            
     except Exception as e:
         print(f"ERROR in register_finish: {e}")
         traceback.print_exc()
