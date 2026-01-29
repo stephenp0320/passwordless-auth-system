@@ -367,7 +367,7 @@ def login_finish_usernameless():
         print(f"Cred recieved: {cred}")
         
         
-        usr_handle = cred["responce"].get("userHandle")
+        usr_handle = cred["response"].get("userHandle")
         if not usr_handle:
             return jsonify({"error": "No userHandle in the response"}), 400
         
