@@ -7,6 +7,7 @@ from types import MappingProxyType
 import traceback
 from datetime import datetime
 import secrets
+import hashlib
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -424,6 +425,11 @@ def Recovery_code_generator(count=8):
         codes.append(code)
         i+=1
     return codes
+
+# Recovery code hash 
+# https://docs.python.org/3/library/hashlib.html
+def hashcode(code):
+    return hashlib.sha256(code.encode().hexdigest())
         
     
     
