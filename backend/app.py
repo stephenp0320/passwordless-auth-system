@@ -358,8 +358,58 @@ def login_start_usernameless():
         print(f"Error in login_start_usernameless")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+       
+# usernameless login finish endpoint
+@app.route("/login/finish/usernameless", methods=["POST"]) 
+def login_finish_usernameless():
+    try:
+        cred = request.json["credential"]
+        print(f"Cred recieved: {cred}")
         
-    
+        
+        usr_handle = cred["responce"].get("userHandle")
+        if not usr_handle:
+            return jsonify({"error": "No userHandle in the response"}), 400
+        
+        #decode the usr_handle to get username using base64
+        # https://stackoverflow.com/questions/3302946/how-to-decode-base64-url-in-python
+        import base64
+        username = base64.urlsafe_b64decode(usr_handle + "==").decode("utf-8")
+        print(f"Username from decoded usr_handle: {username}")
+        
+        creds = CREDENTIALS.get(username)
+        
+        if not creds:
+            return jsonify({"error": "No user has been found"}), 404 
+            
+        # Get all credential data from the list
+        credential_data_list = [c.credential_data for c in creds]
+            
+        authentication_response = {
+            "id": cred["id"],
+            "rawId": cred["rawId"],
+            "response": {
+                "clientDataJSON": cred["response"]["clientDataJSON"],
+                "authenticatorData": cred["response"]["authenticatorData"],
+                "signature": cred["response"]["signature"],
+            },
+            "type": cred["type"],
+            "clientExtensionResults": cred.get("clientExtensionResults", {}),
+        }
+        
+        server.authenticate_complete(
+            STATES["_usernameless_"],
+            credential_data_list,
+            authentication_response,
+        )
+        
+        print(f"User {username} authenticated successfully (usernameless)!")
+        return jsonify({"status": "authenticated", "username": username})
+    except Exception as e:
+        print(f"Error in login_finish_usernameless: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+        
     
 
 if __name__ == "__main__":
