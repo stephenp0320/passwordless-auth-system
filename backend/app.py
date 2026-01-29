@@ -6,6 +6,7 @@ from fido2.utils import websafe_decode, websafe_encode
 from types import MappingProxyType
 import traceback
 from datetime import datetime
+import secrets
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -45,6 +46,8 @@ CREDENTIALS = {}
 STATES = {}
 #dict to track registration times
 REGISTRATION_TIMES = {}
+# recovery codes dict
+RECOVERY_CODES = {}
 
 @app.get("/")
 def root():
@@ -410,6 +413,19 @@ def login_finish_usernameless():
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
         
+# imported secrets for code generation 
+# https://docs.python.org/3/library/secrets.html
+def Recovery_code_generator(count=8):
+    codes = []
+    i = 1
+    while i <= count:
+        code = secrets.token_hex(4).upper()
+        code = f"{code[:4]}-{code[4:]}"
+        codes.append(code)
+        i+=1
+    return codes
+        
+    
     
 
 if __name__ == "__main__":
