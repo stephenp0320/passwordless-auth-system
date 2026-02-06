@@ -38,12 +38,30 @@ function App() {
       // Trigger browser's WebAuthn credential creation
       // https://simplewebauthn.dev/docs/packages/browser#startregistration
       const credentials = await startRegistration(options.publicKey);
-      
-      await fetch("http://localhost:5001/register/finish", {
+
+      const finish_response = await fetch("http://localhost:5001/register/finish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, credential: credentials }),
       });
+
+      // check if recovery codes are returned
+      const res = await finish_response.json()
+      if (res.recovery_codes) {
+        // https://www.w3schools.com/jsref/met_win_alert.asp
+        alert( // show the generated recovery codes to the user
+          "SAVE THESE RECOVERY CODES!\n\n" +
+          "If you lose your device, use one of these codes to recover your account:\n\n" +
+          res.recovery_codes.join("\n") +
+          "\n\nEach code can only be used once."
+        );
+      }
+      
+      // await fetch("http://localhost:5001/register/finish", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ username, credential: credentials }),
+      // });
       
       setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
     } catch (error) {
@@ -144,6 +162,7 @@ function App() {
       setIsLoading(false)
     }
   };
+
 
 
 
