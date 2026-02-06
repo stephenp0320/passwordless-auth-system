@@ -443,53 +443,57 @@ def hashcode(code):
 
 @app.route("/recover", methods=["POST"])
 def recover_account():
-    usr = request.json["username"]
-    recovery_code = request.json["recovery_code"]
-    
-    # check if the user exists
-    if usr not in RECOVERY_CODES: 
-        return jsonify({"error": "No user has been found"}), 404 
-    
-    hashed_code = hashed_code(recovery_code)
-    
-    # check if the recovery code is valid or not 
-    if hashed_code not in RECOVERY_CODES[usr]:
-        return jsonify({"error": "Invalid recovery code"}), 400
-    
-    RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
-    
-    # registration options for the new passkey
-    user = PublicKeyCredentialUserEntity(
-        id=usr.encode(),
-            name=usr,
-            display_name=usr,
-        )
-    
-    # get existing creds to exclude
-    existing_credentials = CREDENTIALS.get(usr, [])
-    exclude_credentials = [cred.credential_data for cred in existing_credentials]
+    try:
+        usr = request.json["username"]
+        recovery_code = request.json["recovery_code"]
         
-    options, state = server.register_begin(
-            user,
-            credentials=exclude_credentials,
-            user_verification="required",
-            resident_key_requirement="required",
-        )
-    
-    USERS[usr] = user
-    STATES[usr] = state
-    
-    options_dict = serialize_options(options)
-    
-    print(f"Recovery initiated for {usr}. Codes remaining: {len(RECOVERY_CODES[usr])}")
-    
-    return jsonify({
-        "status": "recovery_approved",
-        "options": options_dict,
-        "codes_remaining": len(RECOVERY_CODES[usr])
-    })
-
+        # check if the user exists
+        if usr not in RECOVERY_CODES: 
+            return jsonify({"error": "No user has been found"}), 404 
         
+        hashed_code = hashed_code(recovery_code)
+        
+        # check if the recovery code is valid or not 
+        if hashed_code not in RECOVERY_CODES[usr]:
+            return jsonify({"error": "Invalid recovery code"}), 400
+        
+        RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
+        
+        # registration options for the new passkey
+        user = PublicKeyCredentialUserEntity(
+            id=usr.encode(),
+                name=usr,
+                display_name=usr,
+            )
+        
+        # get existing creds to exclude
+        existing_credentials = CREDENTIALS.get(usr, [])
+        exclude_credentials = [cred.credential_data for cred in existing_credentials]
+            
+        options, state = server.register_begin(
+                user,
+                credentials=exclude_credentials,
+                user_verification="required",
+                resident_key_requirement="required",
+            )
+        
+        USERS[usr] = user
+        STATES[usr] = state
+        
+        options_dict = serialize_options(options)
+        
+        print(f"Recovery initiated for {usr}. Codes remaining: {len(RECOVERY_CODES[usr])}")
+        
+        return jsonify({
+            "status": "recovery_approved",
+            "options": options_dict,
+            "codes_remaining": len(RECOVERY_CODES[usr])
+        })
+    except Exception as e:
+        print(f"ERROR in recover_account: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+    
     
         
     
