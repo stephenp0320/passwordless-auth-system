@@ -1,21 +1,23 @@
-/* Simple, clean styling for passwordless auth prototype */
 
 .container {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-  padding: 20px;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  background: #0a0a0a;
 }
 
 .card {
-  background: #ffffff;
-  border-radius: 16px;
+  background: #0a0a0a;
   padding: 40px;
   width: 100%;
-  max-width: 400px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  max-width: 100%;
+  min-height: 100vh;
+  box-shadow: none;
+  border-radius: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .icon {
@@ -27,39 +29,56 @@
 h1 {
   margin: 0 0 8px 0;
   font-size: 28px;
-  color: #1a1a2e;
+  color: #00ff00;
   text-align: center;
   font-weight: 600;
+  font-family: 'Courier New', monospace;
+}
+
+h1, .subtitle {
+  width: 100%;
+  max-width: 400px;
 }
 
 .subtitle {
-  color: #666;
+  color: #00cc00;
   text-align: center;
   margin: 0 0 32px 0;
   font-size: 14px;
+  font-family: 'Courier New', monospace;
 }
 
 .form {
   display: flex;
   flex-direction: column;
   gap: 16px;
+  width: 100%;
+  max-width: 400px;
 }
 
 input {
   padding: 14px 16px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
   font-size: 16px;
   transition: border-color 0.2s;
   outline: none;
+  background: #0a0a0a;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
+}
+
+input::placeholder {
+  color: #006600;
 }
 
 input:focus {
-  border-color: #4f46e5;
+  border-color: #00ff00;
+  box-shadow: 0 0 10px #00ff0050;
 }
 
 input:disabled {
-  background: #f5f5f5;
+  background: #1a1a1a;
   cursor: not-allowed;
 }
 
@@ -72,11 +91,12 @@ input:disabled {
 button {
   padding: 14px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 4px;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s;
+  font-family: 'Courier New', monospace;
 }
 
 button:disabled {
@@ -85,46 +105,54 @@ button:disabled {
 }
 
 .btn-primary {
-  background: #4f46e5;
-  color: white;
+  background: #00ff00;
+  color: #0a0a0a;
+  border: 2px solid #00ff00;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #4338ca;
+  background: #0a0a0a;
+  color: #00ff00;
+  box-shadow: 0 0 15px #00ff0050;
 }
 
 .btn-secondary {
-  background: #f3f4f6;
-  color: #374151;
+  background: transparent;
+  color: #00ff00;
+  border: 2px solid #00ff00;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: #e5e7eb;
+  background: #00ff0020;
+  box-shadow: 0 0 15px #00ff0050;
 }
 
 .status {
   margin-top: 20px;
   padding: 12px 16px;
-  border-radius: 8px;
+  border-radius: 4px;
   text-align: center;
   font-size: 14px;
+  width: 100%;
+  max-width: 400px;
+  font-family: 'Courier New', monospace;
 }
 
 .status.success {
-  background: #d1fae5;
-  color: #065f46;
+  background: #00ff0020;
+  color: #00ff00;
+  border: 1px solid #00ff00;
 }
 
 .status.error {
-  background: #fee2e2;
-  color: #991b1b;
+  background: #ff000020;
+  color: #ff0000;
+  border: 1px solid #ff0000;
 }
 
-/* styling for passkey manager card */
-
-/* Admin table styles */
 .users-table {
   width: 100%;
+  max-width: 600px;
   border-collapse: collapse;
   margin: 20px 0;
 }
@@ -133,51 +161,74 @@ button:disabled {
 .users-table td {
   padding: 12px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
-  color: #333;
+  border-bottom: 1px solid #00ff0050;
+  color: #00ff00;
+  font-family: 'Courier New', monospace;
 }
 
 .users-table th {
-  background: #f5f5f5;
+  background: #0a0a0a;
   font-weight: 600;
+  border-bottom: 2px solid #00ff00;
 }
 
 .users-table tr:hover {
-  background: #f9f9f9;
+  background: #00ff0010;
 }
 
 .btn-revoke {
-  background: #ef4444;
-  color: white;
-  border: none;
+  background: transparent;
+  color: #ff0000;
+  border: 2px solid #ff0000;
   padding: 8px 16px;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 14px;
+  font-family: 'Courier New', monospace;
 }
 
 .btn-revoke:hover {
-  background: #dc2626;
+  background: #ff000020;
+  box-shadow: 0 0 10px #ff000050;
 }
 
 .btn-refresh {
   width: 100%;
+  max-width: 400px;
   padding: 12px;
-  background: #f3f4f6;
-  color: #374151;
-  border: none;
-  border-radius: 8px;
+  background: transparent;
+  color: #00ff00;
+  border: 2px solid #00ff00;
+  border-radius: 4px;
   cursor: pointer;
   font-size: 16px;
   margin-top: 10px;
+  font-family: 'Courier New', monospace;
 }
 
 .btn-refresh:hover {
-  background: #e5e7eb;
+  background: #00ff0020;
+  box-shadow: 0 0 15px #00ff0050;
 }
 
 .loading {
   text-align: center;
-  color: #666;
+  color: #00ff00;
   padding: 20px;
+  font-family: 'Courier New', monospace;
+}
+
+.recovery-link {
+  color: #00cc00;
+  font-family: 'Courier New', monospace;
+}
+
+.recovery-link a {
+  color: #00ff00;
+  text-decoration: none;
+}
+
+.recovery-link a:hover {
+  text-decoration: underline;
+  text-shadow: 0 0 10px #00ff00;
 }
