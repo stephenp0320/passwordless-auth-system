@@ -174,7 +174,9 @@ function App() {
         <div className="icon">🔐</div>
         <h1>Passwordless Auth</h1>
         <p className="subtitle">Secure authentication using passkeys</p>
-        
+        <p className="recovery-link">
+          Lost your device? <a href="/recover">Recover account</a>
+        </p>
         <div className="form">
           <input
             type="text"
