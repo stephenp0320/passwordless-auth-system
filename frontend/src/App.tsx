@@ -2,6 +2,7 @@ import { startRegistration, startAuthentication } from "@simplewebauthn/browser"
 import { useState } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 
 // https://simplewebauthn.dev/docs/packages/browser
@@ -47,13 +48,29 @@ function App() {
 
       // check if recovery codes are returned
       const res = await finish_response.json()
+
+      // https://react-hot-toast.com/docs
+      // simple recovery code toast pop-up
       if (res.recovery_codes) {
-        // https://www.w3schools.com/jsref/met_win_alert.asp
-        alert( // show the generated recovery codes to the user
-          "SAVE THESE RECOVERY CODES!\n\n" +
-          "If you lose your device, use one of these codes to recover your account:\n\n" +
-          res.recovery_codes.join("\n") +
-          "\n\nEach code can only be used once."
+        toast.success(
+          (t) => (
+            <div className="toast-container">
+              <strong>Save these recovery codes!</strong>
+              <pre className="toast-codes">
+                {res.recovery_codes.join('\n')}
+              </pre>
+              <div className="toast-buttons">
+                <button 
+                  className="toast-copy-btn"
+                  onClick={async () => {
+                    await navigator.clipboard.writeText(res.recovery_codes.join('\n'));
+                    toast.success('Copied!');
+                  }}> Copy </button>
+                <button className="toast-close-btn" onClick={() => toast.dismiss(t.id)}>Close</button>
+              </div>
+            </div>
+          ),
+          { duration: 30000 }
         );
       }
       
