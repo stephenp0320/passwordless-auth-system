@@ -439,7 +439,7 @@ def Recovery_code_generator(count=8):
 # Recovery code hash 
 # https://docs.python.org/3/library/hashlib.html
 def hashcode(code):
-    return hashlib.sha256(code.encode().hexdigest())
+    return hashlib.sha256(code.encode()).hexdigest()
 
 @app.route("/recover", methods=["POST"])
 def recover_account():
