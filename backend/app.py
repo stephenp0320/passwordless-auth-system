@@ -99,6 +99,8 @@ def serialize_options(options):
 def register_start():
     try:
         username = request.json["username"]
+        authenticator_type = request.json['authenticator_type', 'platform']
+        
         # Create user entity with unique identifier
         #https://www.w3.org/TR/webauthn-2/#dictdef-publickeycredentialuserentity
         user = PublicKeyCredentialUserEntity(
@@ -106,6 +108,13 @@ def register_start():
             name=username,
             display_name=username,
         )
+        # set the authenticator attachement based on its type
+        if authenticator_type == "cross-platform":
+            authenticator_attachment = "cross-platform"
+        elif authenticator_type == "platform":
+            authenticator_attachment = "platform"
+        else:
+            authenticator_attachment = None
 
         # Generate registration options and state
         # https://developers.yubico.com/python-fido2/API_Documentation/fido2.server.html
@@ -114,6 +123,7 @@ def register_start():
             credentials=[],
             user_verification="preferred",
             resident_key_requirement="required", # enables discoverable credentials
+            authenticator_attachment=authenticator_attachment
         )
         
         # Store user and state for the completion step
