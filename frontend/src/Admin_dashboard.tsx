@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface User {
     username: string;
@@ -10,7 +11,8 @@ function Admin() {
     const [users, setUsers] = useState<User[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
-
+    const navigate = useNavigate();
+    
     // Fetch users on component mount
     // Reference: https://react.dev/reference/react/useEffect
     useEffect(() => {
@@ -112,6 +114,9 @@ function Admin() {
                 {/* Credential refresh button */}
                 <button className='btn-refresh' onClick={fetch_registered_users}>
                     Refresh list of credentials
+                </button>
+                <button onClick={() => navigate('/')} className="btn-secondary"style={{marginTop: '10px'}}>
+                    Back to Login
                 </button>
             </div>
 
