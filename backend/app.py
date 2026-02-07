@@ -451,7 +451,7 @@ def recover_account():
         if usr not in RECOVERY_CODES: 
             return jsonify({"error": "No user has been found"}), 404 
         
-        hashed_code = hashed_code(recovery_code)
+        hashed_code = hashcode(recovery_code)
         
         # check if the recovery code is valid or not 
         if hashed_code not in RECOVERY_CODES[usr]:
