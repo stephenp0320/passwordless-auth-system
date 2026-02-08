@@ -124,7 +124,8 @@ def register_start():
             credentials=[],
             user_verification="preferred",
             resident_key_requirement="required", # enables discoverable credentials
-            authenticator_attachment=authenticator_attachment
+            authenticator_attachment=authenticator_attachment,
+            attestation="direct"
         )
         
         # Store user and state for the completion step
