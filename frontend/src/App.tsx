@@ -16,7 +16,7 @@ function App() {
 
 
   // Passkey registration flow
-  const register = async () => {
+  const register = async (authenticator_type: string = 'platform') => {
     if (!username.trim()) {
       setStatus({ message: 'Please enter a username', type: 'error' })
       return
@@ -31,7 +31,7 @@ function App() {
       const response = await fetch("http://localhost:5001/register/start", {
         method: "POST",
         headers: { "Content-type": "application/json" },
-        body: JSON.stringify({ username }),
+        body: JSON.stringify({ username, authenticator_type: authenticator_type }),
       });
 
       const options = await response.json();
@@ -79,7 +79,8 @@ function App() {
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify({ username, credential: credentials }),
       // });
-      
+
+      console.log(`${username} registered with ${res.authenticator_type}`)
       setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
     } catch (error) {
       console.error(error)
@@ -206,6 +207,9 @@ function App() {
           <div className="buttons">
             <button onClick={register} disabled={isLoading} className="btn-primary">
               {isLoading ? 'Please wait...' : 'Register Passkey'}
+            </button>
+            <button onClick={() => register('cross-platform')} disabled={isLoading} className="btn-primary">
+              {isLoading ? 'Please wait...' : 'Register with Security Key'}
             </button>
             <button onClick={login} disabled={isLoading} className="btn-secondary">
               {isLoading ? 'Please wait...' : 'Login with username'}
