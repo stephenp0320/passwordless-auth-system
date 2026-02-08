@@ -49,6 +49,7 @@ STATES = {}
 REGISTRATION_TIMES = {}
 # recovery codes dict
 RECOVERY_CODES = {}
+AUTHENTICATOR_TYPES = {}
 
 @app.get("/")
 def root():
@@ -174,11 +175,19 @@ def register_finish():
         
         if is_new_usr:
             CREDENTIALS[username] = []
+            AUTHENTICATOR_TYPES[username] = []
             
             
         CREDENTIALS[username].append(auth_data)
         REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
-
+        
+        authenticator_attachment = credential.get("authenticatorAttachment", "unknown")
+        AUTHENTICATOR_TYPES[username].append({
+                    "credential_id": credential["id"],
+                    "type": authenticator_attachment,
+                    "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
+                })
+        
         recovery_codes = None
         if is_new_usr:
             recovery_codes = Recovery_code_generator(8)
@@ -506,7 +515,19 @@ def recover_account():
     
     
         
-    
+@app.route("/user/authenticators", methods=["POST"])
+def get_user_authenticators():
+    try:
+        usr = request.json["username"]
+        authenticators = AUTHENTICATOR_TYPES.get(usr, [])
+        
+        return jsonify({"authenticators" : authenticators})
+    except Exception as e:
+        print(f"Error in get_user_authenticators: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+        
+        
     
 
 if __name__ == "__main__":
