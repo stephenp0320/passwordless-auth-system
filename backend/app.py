@@ -50,6 +50,7 @@ REGISTRATION_TIMES = {}
 # recovery codes dict
 RECOVERY_CODES = {}
 AUTHENTICATOR_TYPES = {}
+ATTESTATION_DATA = {}
 
 @app.get("/")
 def root():
