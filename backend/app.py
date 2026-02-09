@@ -41,7 +41,7 @@ rp = PublicKeyCredentialRpEntity(
     name="Passwordless authentication"
 )
 
-server = Fido2Server(rp)
+server = Fido2Server(rp, attestation="direct")
 # Temporary in-memory storage for users, credentials, and registration states
 USERS = {}
 CREDENTIALS = {}
@@ -127,7 +127,7 @@ def register_start():
             user_verification="preferred",
             resident_key_requirement="required", # enables discoverable credentials
             authenticator_attachment=authenticator_attachment,
-            attestation="direct"
+            # attestation="direct"
         )
         
         # Store user and state for the completion step
