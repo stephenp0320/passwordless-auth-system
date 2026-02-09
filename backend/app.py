@@ -8,6 +8,7 @@ import traceback
 from datetime import datetime
 import secrets
 import hashlib
+from fido2 import cbor
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -172,6 +173,15 @@ def register_finish():
             STATES[username],
             registration_response
         )
+        
+        # extract attestation information using cbor 
+        attestation_obj = cbor.decode(websafe_decode(credential["response"]["attestationObject"]))
+        attestation_fmt = attestation_obj.get("fmt", "none")
+        attestation_stmt = attestation_obj.get("attSmt", {  })
+        
+        # get the authenticator attestation GUID
+        aaguid = auth_data.credential_data.aaguid.hex() if auth_data.credential_data.aaguid else "unknown"
+            
         
         is_new_usr = username not in CREDENTIALS
         
