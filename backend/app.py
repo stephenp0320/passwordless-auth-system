@@ -182,6 +182,25 @@ def register_finish():
         # get the authenticator attestation GUID
         aaguid = auth_data.credential_data.aaguid.hex() if auth_data.credential_data.aaguid else "unknown"
             
+        # https://developer.mozilla.org/en-US/docs/Web/API/Web_Authentication_API/Attestation_and_Assertion
+        # attestation format trust levels
+        
+        if attestation_fmt == "none":
+            trust_level = "self-attestation"
+        elif attestation_fmt == "packed":
+            trust_level = "basic"
+        elif attestation_fmt == "tpm":
+            trust_level = "hardware"
+        elif attestation_fmt == "android-key":
+            trust_level = "hardware"
+        elif attestation_fmt == "fido-u2f":
+            trust_level = "basic"
+        else:
+            trust_level = "unknown"
+        
+        print(f"Attestation format: ${attestation_fmt}")
+        print(f"Trust level: ${trust_level}")
+        print(f"AAGUID: ${aaguid}")
         
         is_new_usr = username not in CREDENTIALS
         
