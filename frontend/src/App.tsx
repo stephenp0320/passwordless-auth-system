@@ -1,4 +1,4 @@
-import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
+import { startRegistration, startAuthentication, browserSupportsWebAuthnAutofill } from "@simplewebauthn/browser";
 import { useEffect, useState , useCallback} from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
@@ -189,8 +189,9 @@ function App() {
     
     try { 
       
-      const available = await PublicKeyCredential.isConditionalMediationAvailable();
-      if (!available){
+      //const available = await PublicKeyCredential.isConditionalMediationAvailable();
+      const autofillSupported = await browserSupportsWebAuthnAutofill();
+      if (!autofillSupported){
         console.log("Conditional login not supported")
         return;
       }
@@ -210,7 +211,10 @@ function App() {
 
       //Trigger browser's WebAuthn authentication
       //https://simplewebauthn.dev/docs/packages/browser#startauthentication
-      const assertion = await startAuthentication(options.publicKey);
+      const assertion = await startAuthentication({
+        optionsJSON: options.publicKey,
+        useBrowserAutofill: true
+      });
 
       // server gets the username from usr_handle
       const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
@@ -261,7 +265,7 @@ function App() {
           />
           
           <div className="buttons">
-            <button onClick={register} disabled={isLoading} className="btn-primary">
+            <button onClick={() => register('platform')} disabled={isLoading} className="btn-primary">
               {isLoading ? 'Please wait...' : 'Register Passkey'}
             </button>
             <button onClick={() => register('cross-platform')} disabled={isLoading} className="btn-primary">
