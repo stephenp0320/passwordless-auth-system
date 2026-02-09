@@ -202,6 +202,7 @@ function App() {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={isLoading}
+            autoComplete="webauthn"
           />
           
           <div className="buttons">
