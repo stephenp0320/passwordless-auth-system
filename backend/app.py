@@ -102,7 +102,7 @@ def serialize_options(options):
 def register_start():
     try:
         username = request.json["username"]
-        authenticator_type = request.json['authenticator_type', 'platform']
+        authenticator_type = request.json.get('authenticator_type', 'platform')
         
         # Create user entity with unique identifier
         #https://www.w3.org/TR/webauthn-2/#dictdef-publickeycredentialuserentity
