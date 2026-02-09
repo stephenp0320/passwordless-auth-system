@@ -567,9 +567,24 @@ def get_user_authenticators():
         print(f"Error in get_user_authenticators: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-        
-        
-    
+     
+@app.route("/admin/attestations", methods=["GET"])
+def get_attestations():
+    try:
+        all_attestations = []
+
+        for usr, attestations in ATTESTATION_DATA.items():
+            for att in attestations:
+                all_attestations.append({
+                        "username": usr,
+                        **att
+                    }) 
+        return jsonify({"attestations": all_attestations})
+    except Exception as e:
+        print(f"Error in get_attestations: {e}")
+        traceback.print_exc()
+        return jsonify({"error": str(e)}), 500
+          
 
 if __name__ == "__main__":
     # https://flask.palletsprojects.com/en/stable/server/
