@@ -207,6 +207,7 @@ def register_finish():
         if is_new_usr:
             CREDENTIALS[username] = []
             AUTHENTICATOR_TYPES[username] = []
+            ATTESTATION_DATA[username] = []
             
             
         CREDENTIALS[username].append(auth_data)
@@ -218,6 +219,15 @@ def register_finish():
                     "type": authenticator_attachment,
                     "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
                 })
+        
+        # stores attestation data in ATTESTATION_DATA dict
+        ATTESTATION_DATA[username].append({
+            "credential_id": credential["id"],
+            "fmt": attestation_fmt,
+            "trust_level": trust_level,
+            "aaguid": aaguid,
+            "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
+        })
         
         recovery_codes = None
         if is_new_usr:
