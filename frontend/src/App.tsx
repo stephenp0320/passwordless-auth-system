@@ -1,5 +1,5 @@
 import { startRegistration, startAuthentication } from "@simplewebauthn/browser";
-import { useState } from 'react';
+import { useEffect, useState , useCallback} from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -181,7 +181,62 @@ function App() {
     }
   };
 
+   // conditional login flow
+   // https://react.dev/reference/react/useCallback
+   const conditionalLogin = useCallback(async () => {
+    setIsLoading(true)
+    setStatus({ message: '', type: '' })
+    
+    try { 
+      
+      const available = await PublicKeyCredential.isConditionalMediationAvailable();
+      if (!available){
+        console.log("Conditional login not supported")
+        return;
+      }
 
+      const response = await fetch("http://localhost:5001/login/start/usernameless", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Login failed')
+      }
+
+      const options = await response.json();
+      console.log("Usernameless login options received:", options);
+
+      //Trigger browser's WebAuthn authentication
+      //https://simplewebauthn.dev/docs/packages/browser#startauthentication
+      const assertion = await startAuthentication(options.publicKey);
+
+      // server gets the username from usr_handle
+      const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
+        method: "POST",
+        headers: { "Content-type": "application/json" },
+        body: JSON.stringify({ credential: assertion }),
+      });
+
+      const result = await finishRes.json();
+      if (!finishRes.ok){
+        throw new Error(result.error|| 'Login failed')
+      }    
+      
+      toast.success(`Welcome back, ${result.username}!`);
+      navigate('/admin') // naviagtes to the admin screen
+    } catch (error) {
+      console.error(error)
+      setStatus({ message: 'Conditional login failed.', type: 'error' })
+    } finally {
+      setIsLoading(false)
+    }
+  }, [navigate]);
+
+  useEffect(() => {
+    conditionalLogin();
+}, [conditionalLogin]);
 
 
   //UI Component
