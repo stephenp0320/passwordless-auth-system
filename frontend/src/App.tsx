@@ -237,8 +237,10 @@ function App() {
         toast.success(`Welcome back, ${result.username}!`);
         navigate('/admin') // naviagtes to the admin screen
       } catch (error) {
-        console.error(error)
-        setStatus({ message: 'Conditional login failed.', type: 'error' })
+        // still throws an abort error due to new WebAuthn ceromony being started
+        // this aborts the waiting conditionalLogin logic.
+        console.error("Conditional AbortError: ", error)
+        //setStatus({ message: 'Conditional login failed.', type: 'error' })
       } finally {
         setIsLoading(false)
       }
