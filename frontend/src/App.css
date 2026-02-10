@@ -28,7 +28,7 @@
 
 h1 {
   margin: 0 0 8px 0;
-  font-size: 28px;
+  font-size: 35px;
   color: #00ff00;
   text-align: center;
   font-weight: 600;
@@ -44,7 +44,7 @@ h1, .subtitle {
   color: #00cc00;
   text-align: center;
   margin: 0 0 32px 0;
-  font-size: 14px;
+  font-size: 16px;
   font-family: 'Courier New', monospace;
 }
 
