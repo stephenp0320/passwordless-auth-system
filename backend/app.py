@@ -9,6 +9,9 @@ from datetime import datetime
 import secrets
 import hashlib
 from fido2 import cbor
+from fido2.mds3 import MdsAttestationVerifier, parse_blob
+import requests as reqs
+
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -23,6 +26,15 @@ def log_request():
     """Log incoming requests for debugging"""
     print("INCOMING:", request.method, request.path)
 
+# load the fido mds 
+# https://stackoverflow.com/questions/26106702/how-do-i-parse-a-json-response-from-python-requests
+def load_mds():
+    response = reqs.get("https://mds3.fidoalliance.org/")
+    if response.ok:
+        mds = parse_blob(response.content)
+        print(f"Loaded fido mds no. times: ${len(mds)}")
+        return MdsAttestationVerifier(mds)
+
 @app.after_request
 def after_request(response):
     #Ensure CORS headers are set on all responses
@@ -32,6 +44,8 @@ def after_request(response):
     response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
     response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS, DELETE')
     return response
+
+mds_verifier = load_mds()
 
 # FIDO2 WebAuthn Server Setup
 # https://github.com/Yubico/python-fido2
@@ -169,10 +183,16 @@ def register_finish():
         }
         
         # Verify the registration response and extract credential data
+        # check if mds is verified
+        # https://github.com/Yubico/python-fido2/blob/main/examples/verify_attestation_mds3.py
         auth_data = server.register_complete(
             STATES[username],
-            registration_response
+            registration_response,
+            verify_attestation = mds_verifier,
         )
+        mds_verified = bool(mds_verifier)
+        
+            
         
         # extract attestation information using cbor 
         attestation_obj = cbor.decode(websafe_decode(credential["response"]["attestationObject"]))
@@ -226,6 +246,7 @@ def register_finish():
             "fmt": attestation_fmt,
             "trust_level": trust_level,
             "aaguid": aaguid,
+            "mds_verified": mds_verified,
             "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
         })
         
@@ -584,6 +605,7 @@ def get_attestations():
         print(f"Error in get_attestations: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
+        
           
 
 if __name__ == "__main__":
