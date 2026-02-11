@@ -29,12 +29,19 @@ def log_request():
 # load the fido mds 
 # https://stackoverflow.com/questions/26106702/how-do-i-parse-a-json-response-from-python-requests
 def load_mds():
-    response = reqs.get("https://mds3.fidoalliance.org/")
-    if response.ok:
-        mds = parse_blob(response.content)
-        print(f"Loaded fido mds no. times: ${len(mds)}")
-        return MdsAttestationVerifier(mds)
-
+    #https://cryptography.io/en/latest/
+    try:
+        with open("globalsign_root_ca.pem", "rb") as f:
+            trust_root_bytes = f.read()
+        response = reqs.get("https://mds3.fidoalliance.org/")
+        if response.ok:
+            mds = parse_blob(response.content, trust_root_bytes)
+            print(f"Loaded fido mds no. times: ${len(mds)}")
+            return MdsAttestationVerifier(mds)
+    except Exception as e:
+        print(f"Error loading mds: ${e}")
+    return None
+        
 @app.after_request
 def after_request(response):
     #Ensure CORS headers are set on all responses
