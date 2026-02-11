@@ -442,7 +442,7 @@ def delete_user_passkey(passkey_id):
         if passkey_id < 0 or passkey_id >= len(creds):
             return jsonify({"Error passkey not found"}), 404
         # ensures that there is atleast one passkey always
-        if len(passkey_id == 0):
+        if len(creds) == 1:
             return jsonify({"Error cannot delete last passkey, register another device first!"}), 404
         # remove the credential 
         CREDENTIALS[usr].pop(passkey_id)
