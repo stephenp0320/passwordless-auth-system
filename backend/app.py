@@ -29,7 +29,6 @@ def log_request():
 # load the fido mds 
 # https://stackoverflow.com/questions/26106702/how-do-i-parse-a-json-response-from-python-requests
 def load_mds():
-    #https://cryptography.io/en/latest/
     try:
         with open("globalsign_root_ca.pem", "rb") as f:
             trust_root_bytes = f.read()
