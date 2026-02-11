@@ -198,6 +198,18 @@ def register_finish():
         )
         mds_verified = bool(mds_verifier)
         
+        # checks if a passkey is synced or device-bound
+        flag = auth_data.flags
+        # https://www.w3.org/TR/webauthn-3/#authdata-flags
+        backup_eligible = bool(flag & 0x08)  # Bit 3 (BE)
+        backup_state = bool(flag & 0x10)     # Bit 4 (BS)
+        
+        if backup_eligible and backup_state:
+            backup_status = "synced"
+        elif backup_eligible:
+            backup_status = "eligible"
+        else:
+            backup_status = "device-bound"
             
         
         # extract attestation information using cbor 
@@ -253,6 +265,9 @@ def register_finish():
             "trust_level": trust_level,
             "aaguid": aaguid,
             "mds_verified": mds_verified,
+            "backup_eligible": backup_eligible,
+            "backup_state": backup_state,
+            "backup_status": backup_status,
             "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
         })
         
