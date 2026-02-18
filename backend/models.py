@@ -18,3 +18,29 @@ class User(db.Model):
     recovery_codes = db.relationship('RecoveryCode', backref='user', lazy=True, cascade='all, delete-orphan')
 
     
+class Credential(db.Model):
+    __tablename__ = 'credentials'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    
+    # the WebAuthn credential data  
+    credential_id = db.Column(db.LargeBinary, nullable=False)
+    public_key = db.Column(db.LargeBinary, nullable=False)
+    sign_count = db.Column(db.Integer, default=0)
+    
+    # The authenticator information
+    # platform or cross-platform
+    authenticator_type = db.Column(db.String(20)) 
+    aaguid = db.Column(db.String(36))
+    
+    # Backup state
+    backup_eligible = db.Column(db.Boolean, default=False)
+    backup_state = db.Column(db.Boolean, default=False)
+    
+    # The attestation information
+    attestation_fmt = db.Column(db.String(20))
+    trust_level = db.Column(db.String(20))
+    mds_verified = db.Column(db.Boolean, default=False)
+    
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
