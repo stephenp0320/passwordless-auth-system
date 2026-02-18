@@ -44,3 +44,13 @@ class Credential(db.Model):
     mds_verified = db.Column(db.Boolean, default=False)
     
     created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
+
+# recovery code model
+# https://flask-sqlalchemy.readthedocs.io/en/stable/models/#defining-models
+class RecoveryCode(db.Model):
+    __tablename__ = 'recovery_codes'
+    
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    code_hash = db.Column(db.String(64), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now(timezone.utc))
