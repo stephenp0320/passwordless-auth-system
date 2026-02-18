@@ -11,11 +11,24 @@ import hashlib
 from fido2 import cbor
 from fido2.mds3 import MdsAttestationVerifier, parse_blob
 import requests as reqs
+# imports for database models
+from models import db, User, Credential, RecoveryCode 
 
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
 
+# https://flask-sqlalchemy.readthedocs.io/en/stable/config/#flask_sqlalchemy.config.SQLALCHEMY_DATABASE_URI
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/passkeys_db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config['SECRET_KEY'] = secrets.token_hex(32)
+
+# database Initialisation
+# https://flask-sqlalchemy.readthedocs.io/en/stable/quickstart/
+db.init_app(app) 
+with app.app_context():
+    db.create_all()
+    
 # CORS (Cross-Origin Resource Sharing) configuration
 # Allows frontend on different port to communicate with backend
 # Reference: https://flask-cors.readthedocs.io/en/latest/
