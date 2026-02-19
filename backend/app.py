@@ -13,7 +13,8 @@ from fido2.mds3 import MdsAttestationVerifier, parse_blob
 import requests as reqs
 # imports for database models
 from models import db, User, Credential, RecoveryCode 
-
+from fido2.webauthn import AttestedCredentialData # build the credential data list from the database
+from fido2.cose import CoseKey
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -335,14 +336,24 @@ def register_finish():
 @app.route("/login/start", methods=["POST"])
 def login_start():
     try:
+        # https://www.geeksforgeeks.org/python/sqlalchemy-db-session-query/
         username = request.json["username"]
-        creds = CREDENTIALS.get(username)
-        
-        if not creds:
+        user = User.query.filter_by(username=username).first()
+        if not user or not user.credentials:
             return {"error": "user is not registered"}, 404
         
-        cred_data_list = [crd.credential_data for crd in creds]
+        #creds = CREDENTIALS.get(username)
         
+        cred_data_list = []
+        for cred in user.credentials:
+            aaguid = bytes.fromhex(cred.aaguid) if cred.aaguid != "unknown" else bytes(16)
+            # https://developers.yubico.com/java-webauthn-server/JavaDoc/webauthn-server-core/1.7.0/com/yubico/webauthn/data/AttestedCredentialData.html
+            cred_data = AttestedCredentialData.create(
+                aaguid,
+                cred.credential_id,
+                CoseKey.parse(cbor.decode(cred.public_key))
+            )
+            cred_data_list.append(cred_data)
         # Generate authentication options with allowed credentials
         # https://www.w3.org/TR/webauthn-2/#dictdef-publickeycredentialrequestoptions
         options, state = server.authenticate_begin(
