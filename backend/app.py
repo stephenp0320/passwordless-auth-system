@@ -443,15 +443,16 @@ def login_finish():
 @app.route("/admin/users", methods=["GET"])
 def get_users():    
     try:
-        users = []
-        for usr in CREDENTIALS.keys():
-            users.append({
-                "username" : usr,
-                "registered_at" : REGISTRATION_TIMES.get(usr),
-                "credential_count" : len(CREDENTIALS.get(usr, [])),
+        users = User.query.all()
+        users_list = []
+        for usr in users:
+            users_list.append({
+                "username" : usr.username,
+                "registered_at" : usr.created_at.strftime("%Y-%m-%d %H:%M"),
+                "credential_count" : len(usr.credentials),
             })
             
-        return jsonify({"users" : users})
+        return jsonify({"users" : users_list})
     except Exception as e:
         print(f"Error in get_users endpoint", {e})
         traceback.print_exc()
