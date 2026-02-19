@@ -253,42 +253,65 @@ def register_finish():
         print(f"Trust level: ${trust_level}")
         print(f"AAGUID: ${aaguid}")
         
-        is_new_usr = username not in CREDENTIALS
+        # https://www.geeksforgeeks.org/python/sqlalchemy-db-session-query/
+        user = User.query.filter_by(username=username).first()
+        
+    
+        is_new_usr = user is None
         
         if is_new_usr:
-            CREDENTIALS[username] = []
-            AUTHENTICATOR_TYPES[username] = []
-            ATTESTATION_DATA[username] = []
+            user = User(username=username)
+            db.session.add(user)
+            db.session.flush() # get the user id
             
+        new_cred = Credential(
+            user_id=user.id,
+            credential_id=auth_data.credential_data.credential_id,
+            public_key=cbor.encode(auth_data.credential_data.public_key),
+            sign_count=auth_data.counter,
+            authenticator_type=credential.get("authenticatorAttachment", "unknown"),
+            aaguid=aaguid,
+            backup_eligible=backup_eligible,
+            backup_state=backup_state,
+            attestation_fmt=attestation_fmt,
+            trust_level=trust_level,
+            mds_verified=mds_verified
+        )
+        db.session.add(new_cred)
             
-        CREDENTIALS[username].append(auth_data)
-        REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
+        # CREDENTIALS[username].append(auth_data)
+        # REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
         
-        authenticator_attachment = credential.get("authenticatorAttachment", "unknown")
-        AUTHENTICATOR_TYPES[username].append({
-                    "credential_id": credential["id"],
-                    "type": authenticator_attachment,
-                    "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
-                })
+        # authenticator_attachment = credential.get("authenticatorAttachment", "unknown")
+        # AUTHENTICATOR_TYPES[username].append({
+        #             "credential_id": credential["id"],
+        #             "type": authenticator_attachment,
+        #             "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
+        #         })
         
-        # stores attestation data in ATTESTATION_DATA dict
-        ATTESTATION_DATA[username].append({
-            "credential_id": credential["id"],
-            "fmt": attestation_fmt,
-            "trust_level": trust_level,
-            "aaguid": aaguid,
-            "mds_verified": mds_verified,
-            "backup_eligible": backup_eligible,
-            "backup_state": backup_state,
-            "backup_status": backup_status,
-            "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
-        })
+        # # stores attestation data in ATTESTATION_DATA dict
+        # ATTESTATION_DATA[username].append({
+        #     "credential_id": credential["id"],
+        #     "fmt": attestation_fmt,
+        #     "trust_level": trust_level,
+        #     "aaguid": aaguid,
+        #     "mds_verified": mds_verified,
+        #     "backup_eligible": backup_eligible,
+        #     "backup_state": backup_state,
+        #     "backup_status": backup_status,
+        #     "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
+        # })
         
         recovery_codes = None
         if is_new_usr:
-            recovery_codes = Recovery_code_generator(8)
-            # store hashed codes in RECOVERY_CODES dict
-            RECOVERY_CODES[username] = [hashcode(code) for code in recovery_codes]
+            codes = Recovery_code_generator(8)
+            recovery_codes = codes
+            for code in codes:
+                hashed = hashcode(code)
+                recovery_code = RecoveryCode(user_id=user.id, code_hash=hashed)
+                db.session.add(recovery_code)
+                
+        db.session.commit()
             
         print(f"User {username} registered successfully!")
         
@@ -296,8 +319,11 @@ def register_finish():
             "status": "registered",
             "recovery_codes": recovery_codes  # sends on first registration attempt
         })
+    
+    # https://docs.sqlalchemy.org/en/21/orm/session_basics.html
             
     except Exception as e:
+        db.session.rollback()
         print(f"ERROR in register_finish: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
