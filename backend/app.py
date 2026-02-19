@@ -463,16 +463,19 @@ def get_users():
 def revoke_credentials():    
     try:
         usr = request.json["username"]
-        
-        if usr not in CREDENTIALS:
+        user = User.query.filter_by(username=usr).first()
+        if not usr:
             return jsonify({"ERROR" : f"{usr} was not found"}), 404
         
-        CREDENTIALS.pop(usr, None)
-        USERS.pop(usr, None)
-        STATES.pop(usr, None)
+        db.session.delete(user)
+        db.session.commit()
+        # CREDENTIALS.pop(usr, None)
+        # USERS.pop(usr, None)
+        # STATES.pop(usr, None)
         return jsonify({"status": "revoked", "username": usr})
     
     except Exception as e:
+        db.session.rollback()
         print(f"Error in revoke_credentials endpoint", {e})
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
