@@ -382,7 +382,11 @@ def login_finish():
     try:
         username = request.json["username"]
         credential = request.json["credential"]
-        creds = CREDENTIALS.get(username)
+        # creds = CREDENTIALS.get(username)
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            return {"error": "user not found"}, 404
+             
         
         print(f"Login credential received: {credential}")
         
@@ -400,20 +404,37 @@ def login_finish():
             "clientExtensionResults": credential.get("clientExtensionResults", {}),
         }
         
-        
-        cred_data_list = [crd.credential_data for crd in creds]
-
+        # cred_data_list = [crd.credential_data for crd in creds]
+        cred_data_list = []
+        for cred in user.credentials:
+            aaguid = bytes.fromhex(cred.aaguid) if cred.aaguid != "unknown" else bytes(16)
+            # https://developers.yubico.com/java-webauthn-server/JavaDoc/webauthn-server-core/1.7.0/com/yubico/webauthn/data/AttestedCredentialData.html
+            cred_data = AttestedCredentialData.create(
+                aaguid,
+                cred.credential_id,
+                CoseKey.parse(cbor.decode(cred.public_key))
+            )
+            cred_data_list.append(cred_data)
+            
         
         # Verify the authentication response
-        server.authenticate_complete(
+        result = server.authenticate_complete(
             STATES[username],
             cred_data_list,
             authentication_response,
         )
         
+        credential_id_bytes = websafe_decode(credential["rawId"])
+        for cred in user.credentials:
+            if cred.credential_id == credential_id_bytes:
+                cred.sign_count = result.new_sign_count
+                db.session.commit()
+                break
+        
         print(f"User {username} authenticated successfully!")
         return {"status": "authenticated"}
     except Exception as e:
+        db.session.rollback()
         print(f"ERROR in login_finish: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
