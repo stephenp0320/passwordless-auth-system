@@ -493,17 +493,22 @@ def revoke_credentials():
 def get_user_passkeys(): 
     try:
         usr = request.json["username"]
-        creds = CREDENTIALS.get(usr, [])
+        # creds = CREDENTIALS.get(usr, [])
+        user = User.query.filter_by(username=usr).first()
+        
+        if not user:
+            return jsonify({"error": f"{usr} not found"}), 404
+
         
         passkeys = []
         # append all user specific passkeys 
-        for i, cred in enumerate(creds):
+        for cred in user.credentials:
             passkeys.append({
-                "id" : i,
-                "credential_id" : str(cred.credential_data.credential_id.hex()),
-                "registered_at" : REGISTRATION_TIMES.get(f"{usr} - {i}")  
+                "id" : cred.id,
+                "credential_id" : cred.credential_data.credential_id.hex(),
+                "authenticator_type": cred.authenticator_type,
+                "registered_at": cred.created_at.strftime("%Y-%m-%d %H:%M")  
             })
-            
             return jsonify({"passkeys" : passkeys})
         
     except Exception as e:
