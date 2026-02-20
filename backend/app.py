@@ -347,7 +347,10 @@ def login_start():
         
         cred_data_list = []
         for cred in user.credentials:
-            aaguid = bytes.fromhex(cred.aaguid) if cred.aaguid != "unknown" else bytes(16)
+            if cred.aaguid and cred.aaguid != "unknown": 
+                aaguid = bytes.fromhex(cred.aaguid) 
+            else:
+                aaguid = bytes(16)
             # https://developers.yubico.com/java-webauthn-server/JavaDoc/webauthn-server-core/1.7.0/com/yubico/webauthn/data/AttestedCredentialData.html
             cred_data = AttestedCredentialData.create(
                 aaguid,
@@ -408,7 +411,10 @@ def login_finish():
         # cred_data_list = [crd.credential_data for crd in creds]
         cred_data_list = []
         for cred in user.credentials:
-            aaguid = bytes.fromhex(cred.aaguid) if cred.aaguid != "unknown" else bytes(16)
+            if cred.aaguid and cred.aaguid != "unknown":
+                aaguid = bytes.fromhex(cred.aaguid) 
+            else:
+                bytes(16)
             # https://developers.yubico.com/java-webauthn-server/JavaDoc/webauthn-server-core/1.7.0/com/yubico/webauthn/data/AttestedCredentialData.html
             cred_data = AttestedCredentialData.create(
                 aaguid,
