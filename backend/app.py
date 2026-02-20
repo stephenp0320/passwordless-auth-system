@@ -521,22 +521,31 @@ def get_user_passkeys():
 def delete_user_passkey(passkey_id):
     try:
         usr = request.json["username"]
-        creds = CREDENTIALS.get(usr, [])
+        # creds = CREDENTIALS.get(usr, [])
+        user = User.query.filter_by(username=usr).first()
         
-        if not creds:
+        if not user:
             return jsonify({f"Error {usr} not found"}), 404
         
-        if passkey_id < 0 or passkey_id >= len(creds):
-            return jsonify({"Error passkey not found"}), 404
+        cred_to_delete = Credential.query.filter_by(id = passkey_id, user_id = user.id)
+        if not cred_to_delete:
+             return jsonify({"error": "Passkey not found"}), 404
+        
+        
         # ensures that there is atleast one passkey always
-        if len(creds) == 1:
+        if len(user.credentials) == 1:
             return jsonify({"Error cannot delete last passkey, register another device first!"}), 404
+        
+        db.session.delete(cred_to_delete)
+        db.session.commit()
+        
         # remove the credential 
-        CREDENTIALS[usr].pop(passkey_id)
+        # CREDENTIALS[usr].pop(passkey_id)
         
         print(f"Passkey deleted: {passkey_id} for user: {usr}")
         return jsonify({"status": "deleted", "passkey_id": passkey_id})
     except Exception as e:
+        db.session.rollback()
         print(f"Error in delete_user_passkey")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
