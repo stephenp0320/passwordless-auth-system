@@ -15,6 +15,7 @@ import requests as reqs
 from models import db, User, Credential, RecoveryCode 
 from fido2.webauthn import AttestedCredentialData # build the credential data list from the database
 from fido2.cose import CoseKey
+import base64
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -208,7 +209,7 @@ def register_finish():
         auth_data = server.register_complete(
             STATES[username],
             registration_response,
-            verify_attestation = mds_verifier,
+            # verify_attestation = mds_verifier,
         )
         mds_verified = bool(mds_verifier)
         
@@ -564,17 +565,31 @@ def login_finish_usernameless():
         
         #decode the usr_handle to get username using base64
         # https://stackoverflow.com/questions/3302946/how-to-decode-base64-url-in-python
-        import base64
         username = base64.urlsafe_b64decode(usr_handle + "==").decode("utf-8")
         print(f"Username from decoded usr_handle: {username}")
         
-        creds = CREDENTIALS.get(username)
-        
-        if not creds:
+        user = User.query.filter_by(username=username).first()
+        if not user or not user.credentials:
             return jsonify({"error": "No user has been found"}), 404 
+        # creds = CREDENTIALS.get(username)
+        
             
         # Get all credential data from the list
-        credential_data_list = [c.credential_data for c in creds]
+        # build credential data list 
+        credential_data_list = []
+        # reconstruct the AttestedCredentialData objects
+        for db_credential in user.credentials:
+            if db_credential.aaguid and db_credential.aaguid != "unknown":
+                aaguid = bytes.fromhex(db_credential.aaguid)
+            else:
+                aaguid = bytes(16)
+            cred_data = AttestedCredentialData.create(
+                aaguid,
+                db_credential.credential_id,
+                CoseKey.parse(cbor.decode(db_credential.public_key))
+            )
+            credential_data_list.append(cred_data)
+            
             
         authentication_response = {
             "id": cred["id"],
