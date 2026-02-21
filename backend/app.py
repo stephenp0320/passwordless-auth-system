@@ -85,12 +85,12 @@ rp = PublicKeyCredentialRpEntity(
 server = Fido2Server(rp, attestation="direct")
 # Temporary in-memory storage for users, credentials, and registration states
 USERS = {}
-STATES = {}
+# STATES = {}
 
 # https://redis.io/docs/latest/commands/setex/
 # store the challenge state in redis 
 def store_challenge_state(key, state_data):
-    serialised = json.dump(serialize_options(state_data))
+    serialised = json.dumps(serialize_options(state_data))
     redis_client.setex(f"webauthn_state:{key}", 300, serialised)
     
 # get the challenge state from redis
@@ -184,7 +184,8 @@ def register_start():
         
         # Store user and state for the completion step
         USERS[username] = user
-        STATES[username] = state
+        # STATES[username] = state
+        store_challenge_state(username, state)
 
         # Serialize options for JSON response
         options_dict = serialize_options(options)
@@ -205,6 +206,10 @@ def register_finish():
         username = request.json["username"]
         credential = request.json["credential"]
         
+        state = get_challenge_state(username)
+        if not state:
+            return jsonify({"error": "Registration session expired"}), 400
+        
         print(f"Credential received: {credential}")
         
         # Structure the response to match fido2 RegistrationResponse format
@@ -224,11 +229,12 @@ def register_finish():
         # check if mds is verified
         # https://github.com/Yubico/python-fido2/blob/main/examples/verify_attestation_mds3.py
         auth_data = server.register_complete(
-            STATES[username],
+            state,
             registration_response,
             # verify_attestation = mds_verifier,
         )
         mds_verified = bool(mds_verifier)
+        delete_state(username)
         
         # checks if a passkey is synced or device-bound
         flag = auth_data.flags
@@ -359,7 +365,8 @@ def login_start():
             cred_data_list,
             user_verification="preferred",
         )
-        STATES[username] = state
+        # STATES[username] = state
+        store_challenge_state(username, state)
         
         options_dict = serialize_options(options)
         return jsonify(options_dict)
@@ -384,6 +391,10 @@ def login_finish():
         user = User.query.filter_by(username=username).first()
         if not user:
             return {"error": "user not found"}, 404
+        
+        state = get_challenge_state(username)
+        if not state:
+            return jsonify({"error": "Login session expired"}), 400
              
         
         print(f"Login credential received: {credential}")
@@ -420,7 +431,7 @@ def login_finish():
         
         # Verify the authentication response
         result = server.authenticate_complete(
-            STATES[username],
+            state,
             cred_data_list,
             authentication_response,
         )
@@ -552,7 +563,8 @@ def login_start_usernameless():
         )
         
         #states are stored using temporary keys
-        STATES["_usernameless_"] = state 
+        # STATES["_usernameless_"] = state 
+        store_challenge_state("_usernameless_", state)
         opt_dict = serialize_options(options) 
         return jsonify(opt_dict)
     
@@ -572,6 +584,10 @@ def login_finish_usernameless():
         usr_handle = cred["response"].get("userHandle")
         if not usr_handle:
             return jsonify({"error": "No userHandle in the response"}), 400
+        
+        state = get_challenge_state("_usernameless_")
+        if not state:
+            return jsonify({"error": "Login session expired"}), 400
         
         #decode the usr_handle to get username using base64
         # https://stackoverflow.com/questions/3302946/how-to-decode-base64-url-in-python
@@ -614,7 +630,7 @@ def login_finish_usernameless():
         }
         
         server.authenticate_complete(
-            STATES["_usernameless_"],
+            state,
             credential_data_list,
             authentication_response,
         )
@@ -674,7 +690,7 @@ def recover_account():
         # existing_credentials = CREDENTIALS.get(usr, [])
         exclude_credentials = []
         
-        for cred in user_entity.credentials:
+        for cred in db_user.credentials:
             if cred.aaguid and cred.aaguid != "unknown":
                 aaguid = bytes.fromhex(cred.aaguid)
             else:
@@ -694,7 +710,8 @@ def recover_account():
             )
         
         USERS[usr] = user_entity
-        STATES[usr] = state
+        # STATES[usr] = state
+        store_challenge_state(usr, state)
         
         options_dict = serialize_options(options)
         remaining_codes = RecoveryCode.query.filter_by(user_id=db_user.id).count()
