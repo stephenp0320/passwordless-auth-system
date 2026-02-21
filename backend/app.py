@@ -734,8 +734,19 @@ def recover_account():
 def get_user_authenticators():
     try:
         usr = request.json["username"]
-        authenticators = AUTHENTICATOR_TYPES.get(usr, [])
+        authenticators = []
+        user = User.query.filter_by(username=usr).first()
         
+        if not user:
+            return jsonify({"authenticators": []})
+        
+        for cred in user.credentials:
+            authenticators.append({ # append creds to authenticators array
+                "credential_id": cred.credential_id.hex(),
+                "type": cred.authenticator_type,
+                "registered_at": cred.created_at.strftime("%Y-%m-%d %H:%M")
+            })
+         
         return jsonify({"authenticators" : authenticators})
     except Exception as e:
         print(f"Error in get_user_authenticators: {e}")
