@@ -162,7 +162,6 @@ def register_start():
             user_verification="preferred",
             resident_key_requirement="required", # enables discoverable credentials
             authenticator_attachment=authenticator_attachment,
-            # attestation="direct"
         )
         
         # Store user and state for the completion step
@@ -281,28 +280,6 @@ def register_finish():
         )
         db.session.add(new_cred)
             
-        # CREDENTIALS[username].append(auth_data)
-        # REGISTRATION_TIMES[username] = datetime.now().strftime("%Y-%m-%d %H:%M")
-        
-        # authenticator_attachment = credential.get("authenticatorAttachment", "unknown")
-        # AUTHENTICATOR_TYPES[username].append({
-        #             "credential_id": credential["id"],
-        #             "type": authenticator_attachment,
-        #             "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
-        #         })
-        
-        # # stores attestation data in ATTESTATION_DATA dict
-        # ATTESTATION_DATA[username].append({
-        #     "credential_id": credential["id"],
-        #     "fmt": attestation_fmt,
-        #     "trust_level": trust_level,
-        #     "aaguid": aaguid,
-        #     "mds_verified": mds_verified,
-        #     "backup_eligible": backup_eligible,
-        #     "backup_state": backup_state,
-        #     "backup_status": backup_status,
-        #     "registered_at": datetime.now().strftime("%Y-%m-%d %H:%M")
-        # })
         
         recovery_codes = None
         if is_new_usr:
@@ -386,7 +363,6 @@ def login_finish():
     try:
         username = request.json["username"]
         credential = request.json["credential"]
-        # creds = CREDENTIALS.get(username)
         user = User.query.filter_by(username=username).first()
         if not user:
             return {"error": "user not found"}, 404
@@ -476,9 +452,7 @@ def revoke_credentials():
         
         db.session.delete(user)
         db.session.commit()
-        # CREDENTIALS.pop(usr, None)
-        # USERS.pop(usr, None)
-        # STATES.pop(usr, None)
+        
         return jsonify({"status": "revoked", "username": usr})
     
     except Exception as e:
@@ -493,7 +467,6 @@ def revoke_credentials():
 def get_user_passkeys(): 
     try:
         usr = request.json["username"]
-        # creds = CREDENTIALS.get(usr, [])
         user = User.query.filter_by(username=usr).first()
         
         if not user:
@@ -521,7 +494,6 @@ def get_user_passkeys():
 def delete_user_passkey(passkey_id):
     try:
         usr = request.json["username"]
-        # creds = CREDENTIALS.get(usr, [])
         user = User.query.filter_by(username=usr).first()
         
         if not user:
@@ -668,8 +640,6 @@ def recover_account():
         hashed_code = hashcode(recovery_code)
         
         # check if the recovery code is valid or not 
-        if hashed_code not in RECOVERY_CODES[usr]:
-            return jsonify({"error": "Invalid recovery code"}), 400
         
         # RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
         # 
