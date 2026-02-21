@@ -471,11 +471,11 @@ def get_user_passkeys():
         for cred in user.credentials:
             passkeys.append({
                 "id" : cred.id,
-                "credential_id" : cred.credential_data.credential_id.hex(),
+                "credential_id" : cred.credential_id.hex(),
                 "authenticator_type": cred.authenticator_type,
                 "registered_at": cred.created_at.strftime("%Y-%m-%d %H:%M")  
             })
-            return jsonify({"passkeys" : passkeys})
+        return jsonify({"passkeys" : passkeys})
         
     except Exception as e:
         print(f"Error in get_user_passkeys for {usr}")
