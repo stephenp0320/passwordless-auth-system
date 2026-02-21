@@ -79,14 +79,7 @@ rp = PublicKeyCredentialRpEntity(
 server = Fido2Server(rp, attestation="direct")
 # Temporary in-memory storage for users, credentials, and registration states
 USERS = {}
-CREDENTIALS = {}
 STATES = {}
-#dict to track registration times
-REGISTRATION_TIMES = {}
-# recovery codes dict
-RECOVERY_CODES = {}
-AUTHENTICATOR_TYPES = {}
-ATTESTATION_DATA = {}
 
 @app.get("/")
 def root():
