@@ -101,6 +101,9 @@ def get_challenge_state(key):
     else:
         return None
     
+# delete the challenge state after expiry
+def delete_state(key):
+    redis_client.delete(f"webauthn_state:{key}")
 
 
 @app.get("/")
