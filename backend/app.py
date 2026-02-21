@@ -658,9 +658,11 @@ def recover_account():
     try:
         usr = request.json["username"]
         recovery_code = request.json["recovery_code"]
+        user = User.query.filter_by(username=usr).first()
+        
         
         # check if the user exists
-        if usr not in RECOVERY_CODES: 
+        if not user: 
             return jsonify({"error": "No user has been found"}), 404 
         
         hashed_code = hashcode(recovery_code)
@@ -669,7 +671,14 @@ def recover_account():
         if hashed_code not in RECOVERY_CODES[usr]:
             return jsonify({"error": "Invalid recovery code"}), 400
         
-        RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
+        # RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
+        # 
+        recovery_code_record = RecoveryCode.query.filter_by(user_id=user.id, code_hash=hashed_code).first()
+        if not recovery_code_record:
+            return jsonify({"error": "Invalid recovery code"}), 400
+        
+        db.session.delete(recovery_code_record)
+        db.session.commit()
         
         # registration options for the new passkey
         user = PublicKeyCredentialUserEntity(
@@ -679,8 +688,20 @@ def recover_account():
             )
         
         # get existing creds to exclude
-        existing_credentials = CREDENTIALS.get(usr, [])
-        exclude_credentials = [cred.credential_data for cred in existing_credentials]
+        # existing_credentials = CREDENTIALS.get(usr, [])
+        exclude_credentials = []
+        
+        for cred in user.credentials:
+            if cred.aaguid and cred.aaguid != "unknown":
+                aaguid = bytes.fromhex(cred.aaguid)
+            else:
+                aaguid = bytes(16)
+            cred_data = AttestedCredentialData.create(
+                aaguid,
+                cred.credential_id,
+                CoseKey.parse(cbor.decode(cred.public_key))
+            )
+            exclude_credentials.append(cred_data)
             
         options, state = server.register_begin(
                 user,
@@ -693,15 +714,16 @@ def recover_account():
         STATES[usr] = state
         
         options_dict = serialize_options(options)
-        
-        print(f"Recovery initiated for {usr}. Codes remaining: {len(RECOVERY_CODES[usr])}")
+        remaining_codes = RecoveryCode.query.filter_by(user_id=user.id).count()
+        print(f"Recovery initiated for {usr}. Codes remaining: {remaining_codes}")
         
         return jsonify({
             "status": "recovery_approved",
             "options": options_dict,
-            "codes_remaining": len(RECOVERY_CODES[usr])
+            "codes_remaining": remaining_codes
         })
     except Exception as e:
+        db.session.rollback()
         print(f"ERROR in recover_account: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
