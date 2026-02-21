@@ -492,7 +492,7 @@ def delete_user_passkey(passkey_id):
         if not user:
             return jsonify({f"Error {usr} not found"}), 404
         
-        cred_to_delete = Credential.query.filter_by(id = passkey_id, user_id = user.id)
+        cred_to_delete = Credential.query.filter_by(id = passkey_id, user_id = user.id).first()
         if not cred_to_delete:
              return jsonify({"error": "Passkey not found"}), 404
         
