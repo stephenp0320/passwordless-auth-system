@@ -383,7 +383,7 @@ def login_finish():
             if cred.aaguid and cred.aaguid != "unknown":
                 aaguid = bytes.fromhex(cred.aaguid) 
             else:
-                bytes(16)
+                aaguid = bytes(16)
             # https://developers.yubico.com/java-webauthn-server/JavaDoc/webauthn-server-core/1.7.0/com/yubico/webauthn/data/AttestedCredentialData.html
             cred_data = AttestedCredentialData.create(
                 aaguid,
