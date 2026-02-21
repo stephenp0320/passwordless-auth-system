@@ -16,9 +16,15 @@ from models import db, User, Credential, RecoveryCode
 from fido2.webauthn import AttestedCredentialData # build the credential data list from the database
 from fido2.cose import CoseKey
 import base64
+import redis
+import json
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
+
+# Redis connection for session & challenge storage
+# https://redis.io/docs/latest/develop/clients/redis-py/
+redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 # https://flask-sqlalchemy.readthedocs.io/en/stable/config/#flask_sqlalchemy.config.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/passkeys_db'
