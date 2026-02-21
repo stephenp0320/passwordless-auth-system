@@ -623,20 +623,15 @@ def recover_account():
     try:
         usr = request.json["username"]
         recovery_code = request.json["recovery_code"]
-        user = User.query.filter_by(username=usr).first()
-        
+        db_user = User.query.filter_by(username=usr).first()
         
         # check if the user exists
-        if not user: 
+        if not db_user: 
             return jsonify({"error": "No user has been found"}), 404 
         
         hashed_code = hashcode(recovery_code)
         
-        # check if the recovery code is valid or not 
-        
-        # RECOVERY_CODES[usr].remove(hashed_code) # one time usage only
-        # 
-        recovery_code_record = RecoveryCode.query.filter_by(user_id=user.id, code_hash=hashed_code).first()
+        recovery_code_record = RecoveryCode.query.filter_by(user_id=db_user.id, code_hash=hashed_code).first()
         if not recovery_code_record:
             return jsonify({"error": "Invalid recovery code"}), 400
         
@@ -644,7 +639,7 @@ def recover_account():
         db.session.commit()
         
         # registration options for the new passkey
-        user = PublicKeyCredentialUserEntity(
+        user_entity = PublicKeyCredentialUserEntity(
             id=usr.encode(),
                 name=usr,
                 display_name=usr,
@@ -654,7 +649,7 @@ def recover_account():
         # existing_credentials = CREDENTIALS.get(usr, [])
         exclude_credentials = []
         
-        for cred in user.credentials:
+        for cred in user_entity.credentials:
             if cred.aaguid and cred.aaguid != "unknown":
                 aaguid = bytes.fromhex(cred.aaguid)
             else:
@@ -667,17 +662,17 @@ def recover_account():
             exclude_credentials.append(cred_data)
             
         options, state = server.register_begin(
-                user,
+                user_entity,
                 credentials=exclude_credentials,
                 user_verification="required",
                 resident_key_requirement="required",
             )
         
-        USERS[usr] = user
+        USERS[usr] = user_entity
         STATES[usr] = state
         
         options_dict = serialize_options(options)
-        remaining_codes = RecoveryCode.query.filter_by(user_id=user.id).count()
+        remaining_codes = RecoveryCode.query.filter_by(user_id=db_user.id).count()
         print(f"Recovery initiated for {usr}. Codes remaining: {remaining_codes}")
         
         return jsonify({
