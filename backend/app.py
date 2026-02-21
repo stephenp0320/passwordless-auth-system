@@ -93,6 +93,13 @@ def store_challenge_state(key, state_data):
     serialised = json.dump(serialize_options(state_data))
     redis_client.setex(f"webauthn_state:{key}", 300, serialised)
     
+# get the challenge state from redis
+def get_challenge_state(key):
+    challenge_state = redis_client.get(f"webauthn_state:{key}")
+    if challenge_state:
+        return json.loads(challenge_state)
+    else:
+        return None
     
 
 
