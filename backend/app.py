@@ -757,13 +757,21 @@ def get_user_authenticators():
 def get_attestations():
     try:
         all_attestations = []
-
-        for usr, attestations in ATTESTATION_DATA.items():
-            for att in attestations:
-                all_attestations.append({
-                        "username": usr,
-                        **att
-                    }) 
+        creds = Credential.query.all()
+        
+        for cred in creds:
+            all_attestations.append({
+                "username": cred.user.username,
+                "credential_id": cred.credential_id.hex(),
+                "fmt": cred.attestation_fmt,
+                "trust_level": cred.trust_level,
+                "aaguid": cred.aaguid,
+                "mds_verified": cred.mds_verified,
+                "backup_eligible": cred.backup_eligible,
+                "backup_state": cred.backup_state,
+                "registered_at": cred.created_at.strftime("%Y-%m-%d %H:%M")
+                })
+             
         return jsonify({"attestations": all_attestations})
     except Exception as e:
         print(f"Error in get_attestations: {e}")
