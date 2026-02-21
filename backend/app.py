@@ -87,6 +87,15 @@ server = Fido2Server(rp, attestation="direct")
 USERS = {}
 STATES = {}
 
+# https://redis.io/docs/latest/commands/setex/
+# store the challenge state in redis 
+def store_challenge_state(key, state_data):
+    serialised = json.dump(serialize_options(state_data))
+    redis_client.setex(f"webauthn_state:{key}", 300, serialised)
+    
+    
+
+
 @app.get("/")
 def root():
     """Health check endpoint"""
