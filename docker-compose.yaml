@@ -1,0 +1,72 @@
+# https://github.com/docker/multi-container-app/blob/main/compose.yaml
+
+version: '3.8'
+services:
+  # PostgreSQL Database
+  # https://stackoverflow.com/questions/75246059/create-a-postgres-database-within-a-docker-compose-yml-file
+  db:
+    image: postgres:15-alpine
+    container_name: passkeys_db
+    environment:
+      POSTGRES_USER: passkeys
+      POSTGRES_PASSWORD: passkeys123
+      POSTGRES_DB: passkeys_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U passkeys -d passkeys_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Redis for session management
+  # https://github.com/bitnami/containers/blob/main/bitnami/redis/docker-compose.yml
+  redis:
+    image: redis:7-alpine
+    container_name: passkeys_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Flask Backend
+  backend:
+    build: ./backend
+    container_name: passkeys_backend
+    ports:
+      - "5001:5001"
+    environment:
+      - DATABASE_URL=postgresql://passkeys:passkeys123@db:5432/passkeys_db
+      - REDIS_URL=redis://redis:6379/0
+      - FLASK_ENV=development
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./backend:/app
+
+  # React Frontend
+  # https://blog.teclado.com/run-flask-apps-with-docker-compose/
+  frontend:
+    build: ./frontend
+    container_name: passkeys_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  redis_data:
