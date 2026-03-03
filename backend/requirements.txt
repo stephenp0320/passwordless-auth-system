@@ -1,0 +1,7 @@
+flask
+flask-cors
+flask-sqlalchemy
+fido2
+psycopg2-binary
+redis
+requests
