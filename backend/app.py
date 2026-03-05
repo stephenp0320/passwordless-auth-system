@@ -25,7 +25,7 @@ app = Flask(__name__)
 
 # Redis connection for session & challenge storage
 # https://redis.io/docs/latest/develop/clients/redis-py/
-redis_client = redis.Redis(host='localhost', port=6379, db=0)
+redis_client = redis.from_url(os.environ.get('REDIS_URL', 'redis://localhost:6379/0'))
 
 # https://flask-sqlalchemy.readthedocs.io/en/stable/config/#flask_sqlalchemy.config.SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://localhost/passkeys_db')
