@@ -18,6 +18,7 @@ from fido2.cose import CoseKey
 import base64
 import redis
 import json
+import os
 # Flask application setup
 # Reference: https://flask.palletsprojects.com/en/stable/quickstart/
 app = Flask(__name__)
@@ -27,7 +28,7 @@ app = Flask(__name__)
 redis_client = redis.Redis(host='localhost', port=6379, db=0)
 
 # https://flask-sqlalchemy.readthedocs.io/en/stable/config/#flask_sqlalchemy.config.SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://localhost/passkeys_db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'postgresql://localhost/passkeys_db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SECRET_KEY'] = secrets.token_hex(32)
 
