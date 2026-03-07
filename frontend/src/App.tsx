@@ -3,6 +3,7 @@ import { useEffect, useState , useCallback, useRef} from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import LiveLog, { useLiveLog } from './LiveLog';
 
 
 // https://simplewebauthn.dev/docs/packages/browser
@@ -13,6 +14,8 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const conditionalLoginStarted = useRef(false);
   const navigate = useNavigate();
+  const { logs, addLog, clearLogs } = useLiveLog();
+
 
 
   // Passkey registration flow

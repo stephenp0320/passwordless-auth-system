@@ -232,3 +232,81 @@ button:disabled {
   text-decoration: underline;
   text-shadow: 0 0 10px #00ff00;
 }
+
+.live-log-container {
+  background: rgba(0, 0, 0, 0.8);
+  border: 1px solid #00ff00;
+  border-radius: 8px;
+  font-family: 'Courier New', monospace;
+  overflow: hidden;
+  height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.live-log-header {
+  background: rgba(0, 255, 0, 0.1);
+  padding: 10px 15px;
+  border-bottom: 1px solid #00ff00;
+  color: #00ff00;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.terminal-icon {
+  margin-right: 8px;
+}
+
+.live-log-content {
+  padding: 15px;
+  overflow-y: auto;
+  flex: 1;
+  font-size: 13px;
+}
+
+.log-entry {
+  margin-bottom: 8px;
+  display: flex;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+.log-timestamp {
+  color: #666;
+  font-size: 11px;
+}
+
+.log-prefix {
+  color: #00ff00;
+  font-weight: bold;
+}
+
+.log-message {
+  color: #00ff00;
+}
+
+.log-entry.success .log-message {
+  color: #00ff00;
+}
+
+.log-entry.error .log-message {
+  color: #ff4444;
+}
+
+.log-entry.waiting .log-message {
+  color: #ffaa00;
+}
+
+/* Scrollbar styling */
+.live-log-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.live-log-content::-webkit-scrollbar-track {
+  background: #111;
+}
+
+.live-log-content::-webkit-scrollbar-thumb {
+  background: #00ff00;
+  border-radius: 3px;
+}
