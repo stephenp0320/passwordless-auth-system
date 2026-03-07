@@ -43,3 +43,74 @@ export const useLiveLog = () => {
 
     return { logs, addLog, clearLogs };
 };
+
+// Component to render the live log entries
+const LiveLog = ({ logs }: LiveLogProps) => {
+    const logEndRef = useRef<HTMLDivElement>(null);
+    // Effect to scroll to the latest log entry whenever logs are updated
+    useEffect(() => {
+      logEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    }, [logs]);
+
+
+    // Function to determine styles based on log type
+    const getTypeStyles = (type: LogEntry['type']) => {
+      switch (type) {
+        case 'success':
+          return { color: '#00ff00', prefix: '✓' };
+        case 'error':
+          return { color: '#ff4444', prefix: '✗' };
+        case 'waiting':
+          return { color: '#ffaa00', prefix: '⏳' };
+        default:
+          return { color: '#00ff00', prefix: '>' };
+      }
+    };
+    
+    // Render the live log container with header and log entries
+    return (
+        <div className="live-log-container">
+          <div className="live-log-header">
+            <span className="terminal-icon">▸</span> Live Authentication Log
+          </div>
+            {/* Container for log entries, using AnimatePresence to handle animations when logs are added or removed  */}
+          <div className="live-log-content">
+            {/* https://motion.dev/docs/react-animate-presence  */}
+            <AnimatePresence>
+              {logs.length === 0 ? (
+                <motion.div 
+                  className="log-entry waiting"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  >
+                  <span className="log-prefix">{'>'}</span>
+                  <span className="log-message">Waiting for authentication...</span>
+                </motion.div>
+              ) : (
+                // Map through the logs and render each log entry with appropriate styles and animations
+                logs.map((log) => {
+                  const styles = getTypeStyles(log.type);
+                  return (
+                    // use motion.div to animate the appearance of each log entry
+                    <motion.div
+                      key={log.id}
+                      className={`log-entry ${log.type}`}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <span className="log-timestamp">[{log.timestamp}]</span>
+                      <span className="log-prefix" style={{ color: styles.color }}>
+                        {styles.prefix}
+                      </span>
+                      <span className="log-message">{log.message}</span>
+                    </motion.div>
+                  );
+                })
+              )}
+            </AnimatePresence>
+            <div ref={logEndRef} />
+          </div>
+        </div>
+      );
+    };
