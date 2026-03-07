@@ -27,8 +27,13 @@ function App() {
     
     setIsLoading(true)
     setStatus({ message: '', type: '' })
+    clearLogs() 
     
     try {
+      addLog('Initiating registration ceremony...', 'info')
+      addLog(`Username: ${username}`, 'info')
+      addLog(`Authenticator type: ${authenticator_type}`, 'info')
+
       // Fetch registration options from server
       // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
       const response = await fetch("http://localhost:5001/register/start", {
@@ -38,11 +43,18 @@ function App() {
       });
 
       const options = await response.json();
+      addLog('Challenge received from server', 'success')
+      addLog(`Challenge: ${options.publicKey.challenge.substring(0, 20)}...`, 'info') 
+      addLog('Awaiting authenticator response...', 'waiting')
+
       console.log("Options received:", options);
       // Trigger browser's WebAuthn credential creation
       // https://simplewebauthn.dev/docs/packages/browser#startregistration
       const credentials = await startRegistration(options.publicKey);
+      addLog('Credential created by authenticator', 'success')
+      addLog(`Credential ID: ${credentials.id.substring(0, 16)}...`, 'info') 
 
+      addLog('Sending credential to server for verification...', 'info')
       const finish_response = await fetch("http://localhost:5001/register/finish", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -51,10 +63,13 @@ function App() {
 
       // check if recovery codes are returned
       const res = await finish_response.json()
+      addLog('Server verified credential', 'success')
+      addLog(`User ${username} registered successfully!`, 'success')
 
       // https://react-hot-toast.com/docs
       // simple recovery code toast pop-up
       if (res.recovery_codes) {
+        addLog(`Generated ${res.recovery_codes.length} recovery codes`, 'info')
         toast.success(
           (t) => (
             <div className="toast-container">
@@ -87,6 +102,8 @@ function App() {
       setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
     } catch (error) {
       console.error(error)
+      addLog('Registration failed', 'error')
+      addLog(`Error: ${error}`, 'error')
       setStatus({ message: 'Registration failed. Please try again.', type: 'error' })
     } finally {
       setIsLoading(false)
