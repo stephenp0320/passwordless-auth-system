@@ -284,10 +284,19 @@ function App() {
   //https://react.dev/learn/writing-markup-with-jsx
   return (
     <div className="container">
-      <div className="card">
+    <div className="card-wide">
+      <div className="card-header">
         <div className="icon">🔐</div>
         <h1>Passwordless Auth</h1>
         <p className="subtitle">Secure authentication using passkeys</p>
+      </div>
+        
+        <div className="card-body">
+          <div className="panel education-panel">
+            <h3>📚 Learn About Passkeys</h3>
+            {/* <p></p> */}
+          </div>
+          <div className="panel auth-panel">
         <p className="recovery-link">
           Lost your device? <a href="/recover">Recover account</a>
         </p>
@@ -324,6 +333,11 @@ function App() {
             {status.message}
           </div>
         )}
+          </div>
+          <div className="panel log-panel">
+            <LiveLog logs={logs} />
+          </div>
+        </div>
       </div>
     </div>
   )

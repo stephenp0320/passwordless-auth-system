@@ -37,7 +37,7 @@ h1 {
 
 h1, .subtitle {
   width: 100%;
-  max-width: 400px;
+  max-width: none;
 }
 
 .subtitle {
@@ -309,4 +309,135 @@ button:disabled {
 .live-log-content::-webkit-scrollbar-thumb {
   background: #00ff00;
   border-radius: 3px;
+}
+
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.card-wide {
+  background: rgba(0, 0, 0, 0.8);
+  border: 2px solid #00ff00;
+  border-radius: 12px;
+  padding: 50px;
+  width: 95vw;
+  max-width: 2000px;
+  box-shadow: 0 0 100px rgba(0, 255, 0, 0.3);
+}
+
+.card-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #00ff0044;
+  padding-bottom: 15px;
+}
+
+.card-header h1 {
+  color: #00ff00;
+  margin: 10px 0 5px 0;
+}
+
+.card-header .subtitle {
+  color: #00ff00;
+  opacity: 0.7;
+  margin: 0;
+}
+
+.card-header .icon {
+  font-size: 2.5rem;
+}
+
+.card-body {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: 15px;
+  min-height: 400px;
+}
+
+.panel {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid #00ff00;
+  border-radius: 8px;
+  padding: 15px;
+}
+
+.education-panel h3 {
+  color: #00ff00;
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.education-panel p {
+  color: #00ff00;
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+/* Auth Panel */
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.auth-panel .form {
+  width: 100%;
+}
+
+.auth-panel input {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-panel .buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.auth-panel .recovery-link {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #00ff00;
+  font-size: 0.85rem;
+}
+
+.auth-panel .recovery-link a {
+  color: #00ff00;
+}
+
+
+.log-panel {
+  padding: 0;
+  overflow: hidden;
+}
+
+.log-panel .live-log-container {
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+
+@media (max-width: 900px) {
+  .card-body {
+    grid-template-columns: 1fr;
+  }
+  
+  .auth-panel {
+    order: 1;
+  }
+  
+  .education-panel {
+    order: 2;
+  }
+  
+  .log-panel {
+    order: 3;
+  }
 }

@@ -1,5 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef, useEffect } from 'react';
 
 // Interface to define log structure
 interface LogEntry {
@@ -75,42 +74,32 @@ const LiveLog = ({ logs }: LiveLogProps) => {
           </div>
             {/* Container for log entries, using AnimatePresence to handle animations when logs are added or removed  */}
           <div className="live-log-content">
-            {/* https://motion.dev/docs/react-animate-presence  */}
-            <AnimatePresence>
               {logs.length === 0 ? (
-                <motion.div 
-                  className="log-entry waiting"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  >
-                  <span className="log-prefix">{'>'}</span>
-                  <span className="log-message">Waiting for authentication...</span>
-                </motion.div>
+              <div className="log-entry waiting">
+              <span className="log-prefix">{'>'}</span>
+              <span className="log-message">Waiting for authentication...</span>
+            </div>
               ) : (
-                // Map through the logs and render each log entry with appropriate styles and animations
                 logs.map((log) => {
                   const styles = getTypeStyles(log.type);
                   return (
-                    // use motion.div to animate the appearance of each log entry
-                    <motion.div
+                  <div
                       key={log.id}
                       className={`log-entry ${log.type}`}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.3 }}
                     >
                       <span className="log-timestamp">[{log.timestamp}]</span>
                       <span className="log-prefix" style={{ color: styles.color }}>
                         {styles.prefix}
                       </span>
                       <span className="log-message">{log.message}</span>
-                    </motion.div>
+                </div>
                   );
                 })
               )}
-            </AnimatePresence>
-            <div ref={logEndRef} />
-          </div>
+          <div ref={logEndRef} />
         </div>
-      );
-    };
+      </div>
+    );
+  };
+
+export default LiveLog;
