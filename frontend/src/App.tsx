@@ -96,11 +96,6 @@ function App() {
         error_message();
       }
       
-      // await fetch("http://localhost:5001/register/finish", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ username, credential: credentials }),
-      // });
 
       console.log(`${username} registered with ${res.authenticator_type}`)
       setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
