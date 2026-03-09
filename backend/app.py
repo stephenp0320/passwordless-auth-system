@@ -84,9 +84,8 @@ rp = PublicKeyCredentialRpEntity(
 )
 
 server = Fido2Server(rp, attestation="direct")
-# Temporary in-memory storage for users, credentials, and registration states
+# Temporary in-memory storage for users using dictionary
 USERS = {}
-# STATES = {}
 
 # https://redis.io/docs/latest/commands/setex/
 # store the challenge state in redis 
