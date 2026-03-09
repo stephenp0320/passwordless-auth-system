@@ -218,6 +218,23 @@ def attestation_trust_levels(attestation_fmt):
     print(f"Trust level: {trust_level}")
     return trust_level
 
+# checks if a passkey is synced or device-bound
+# https://www.w3.org/TR/webauthn-3/#authdata-flags
+def is_backup_eligible(auth_data):
+    flag = auth_data.flags
+    backup_eligible = bool(flag & 0x08)  # Bit 3 (BE)
+    backup_state = bool(flag & 0x10)     # Bit 4 (BS)
+        
+    if backup_eligible and backup_state:
+        backup_status = "synced"
+    elif backup_eligible:
+        backup_status = "eligible"
+    else:
+        backup_status = "device-bound"
+        
+    print(f"Backup eligible: {backup_eligible}, Backup state: {backup_state}, Backup status: {backup_status}")
+    return backup_eligible, backup_state
+
 # This endpoint verifies the authenticator's response and stores the credential for future authentication.
 # https://www.w3.org/TR/webauthn-2/#sctn-registering-a-new-credential
 # https://simplewebauthn.dev/docs/packages/server
@@ -258,19 +275,7 @@ def register_finish():
         mds_verified = bool(mds_verifier)
         delete_state(username)
         
-        # checks if a passkey is synced or device-bound
-        flag = auth_data.flags
-        # https://www.w3.org/TR/webauthn-3/#authdata-flags
-        backup_eligible = bool(flag & 0x08)  # Bit 3 (BE)
-        backup_state = bool(flag & 0x10)     # Bit 4 (BS)
-        
-        if backup_eligible and backup_state:
-            backup_status = "synced"
-        elif backup_eligible:
-            backup_status = "eligible"
-        else:
-            backup_status = "device-bound"
-            
+        backup_eligible, backup_state = is_backup_eligible(auth_data)
         
         # extract attestation information using cbor 
         attestation_obj = cbor.decode(websafe_decode(credential["response"]["attestationObject"]))
