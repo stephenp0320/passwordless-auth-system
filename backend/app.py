@@ -457,21 +457,24 @@ def login_finish():
         print(f"ERROR in login_finish: {e}")
         traceback.print_exc()
         return jsonify({"error": str(e)}), 500
-    
-# get users endpoint
+
+# user query function to get all users and their credential count, used in admin endpoint
+def user_query():
+    users = User.query.all()
+    users_list = []
+    for usr in users:
+        users_list.append({
+            "username" : usr.username,
+            "registered_at" : usr.created_at.strftime("%Y-%m-%d %H:%M"),
+            "credential_count" : len(usr.credentials),
+        }) 
+    return jsonify({"users" : users_list})
+
+# get all users endpoint for admin dashboard, includes credential count and registration date
 @app.route("/admin/users", methods=["GET"])
 def get_users():    
     try:
-        users = User.query.all()
-        users_list = []
-        for usr in users:
-            users_list.append({
-                "username" : usr.username,
-                "registered_at" : usr.created_at.strftime("%Y-%m-%d %H:%M"),
-                "credential_count" : len(usr.credentials),
-            })
-            
-        return jsonify({"users" : users_list})
+        return user_query()
     except Exception as e:
         print(f"Error in get_users endpoint", {e})
         traceback.print_exc()
