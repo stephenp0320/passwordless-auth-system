@@ -354,7 +354,6 @@ def login_start():
         if not user or not user.credentials:
             return {"error": "user is not registered"}, 404
         
-        
         cred_data_list = []
         for cred in user.credentials:
             if cred.aaguid and cred.aaguid != "unknown": 
@@ -374,7 +373,6 @@ def login_start():
             cred_data_list,
             user_verification="preferred",
         )
-        # STATES[username] = state
         store_challenge_state(username, state)
         
         options_dict = serialize_options(options)
