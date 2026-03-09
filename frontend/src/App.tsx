@@ -65,31 +65,35 @@ function App() {
       const res = await finish_response.json()
       addLog('Server verified credential', 'success')
       addLog(`User ${username} registered successfully!`, 'success')
+      const error_message = () => toast.error(res.error || 'Registration failed. Please try again.', { duration: 5000 });
+      const success_message = () => toast.success(
+        (t) => (
+          <div className="toast-container">
+            <strong>Save these recovery codes!</strong>
+            <pre className="toast-codes">
+              {res.recovery_codes.join('\n')}
+            </pre>
+            <div className="toast-buttons">
+              <button 
+                className="toast-copy-btn"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(res.recovery_codes.join('\n'));
+                  toast.success('Copied!');
+                }}> Copy </button>
+              <button className="toast-close-btn" onClick={() => toast.dismiss(t.id)}>Close</button>
+            </div>
+          </div>
+        ),
+        { duration: 30000 }
+      );
 
       // https://react-hot-toast.com/docs
       // simple recovery code toast pop-up
       if (res.recovery_codes) {
         addLog(`Generated ${res.recovery_codes.length} recovery codes`, 'info')
-        toast.success(
-          (t) => (
-            <div className="toast-container">
-              <strong>Save these recovery codes!</strong>
-              <pre className="toast-codes">
-                {res.recovery_codes.join('\n')}
-              </pre>
-              <div className="toast-buttons">
-                <button 
-                  className="toast-copy-btn"
-                  onClick={async () => {
-                    await navigator.clipboard.writeText(res.recovery_codes.join('\n'));
-                    toast.success('Copied!');
-                  }}> Copy </button>
-                <button className="toast-close-btn" onClick={() => toast.dismiss(t.id)}>Close</button>
-              </div>
-            </div>
-          ),
-          { duration: 30000 }
-        );
+        success_message();
+      } else {
+        error_message();
       }
       
       // await fetch("http://localhost:5001/register/finish", {
