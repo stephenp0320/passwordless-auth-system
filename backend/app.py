@@ -354,7 +354,6 @@ def login_start():
         if not user or not user.credentials:
             return {"error": "user is not registered"}, 404
         
-        #creds = CREDENTIALS.get(username)
         
         cred_data_list = []
         for cred in user.credentials:
