@@ -11,7 +11,6 @@ import hashlib
 from fido2 import cbor
 from fido2.mds3 import MdsAttestationVerifier, parse_blob
 import requests as reqs
-# imports for database models
 from models import db, User, Credential, RecoveryCode 
 from fido2.webauthn import AttestedCredentialData # build the credential data list from the database
 from fido2.cose import CoseKey
