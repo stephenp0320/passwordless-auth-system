@@ -4,6 +4,7 @@ import './App.css';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import LiveLog, { useLiveLog } from './LiveLog';
+import ThemeSelector from './ThemeSelector';
 
 
 // https://simplewebauthn.dev/docs/packages/browser
@@ -283,6 +284,8 @@ function App() {
   //https://react.dev/learn/writing-markup-with-jsx
   return (
     <div className="container">
+      {/* Theme selector component to switch between color themes */}
+      <ThemeSelector />
     <div className="card-wide">
       <div className="card-header">
         <div className="icon">🔐</div>
