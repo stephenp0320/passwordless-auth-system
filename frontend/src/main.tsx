@@ -7,9 +7,11 @@ import App from './App.tsx'
 import Admin from './Admin_dashboard.tsx'
 import PasskeyManager from './PasskeyManager.tsx'
 import Recovery from './Recovery.tsx'
+import { ThemeProvider } from './ThemeContext.tsx'
 // admin screen route
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
+    <ThemeProvider>
     <Toaster position="top-center" />
     <BrowserRouter>
       <Routes>
@@ -19,5 +21,6 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/recover" element={<Recovery />} />
       </Routes>
     </BrowserRouter>
+    </ThemeProvider>
   </StrictMode>,
 )
