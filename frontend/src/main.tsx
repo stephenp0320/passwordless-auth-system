@@ -17,7 +17,7 @@ createRoot(document.getElementById('root')!).render(
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/admin" element={<Admin />} />
-        <Route path="/passkeys" element={<PasskeyManager username="stephenp0320" />} />
+        <Route path="/passkeys/:username" element={<PasskeyManager />} />
         <Route path="/recover" element={<Recovery />} />
       </Routes>
     </BrowserRouter>

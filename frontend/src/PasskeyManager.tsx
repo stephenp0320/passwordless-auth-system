@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
-import "./App";
+import { useState, useEffect, useCallback } from "react";
+import { useParams } from "react-router-dom";
+import "./App.css";
 
 interface Passkey {
     id: number;
@@ -7,25 +8,17 @@ interface Passkey {
     registered_at: string;
 }
 
-interface PasskeyManageProps {
-    username: string
-}
-
-function PasskeyManager({username} : PasskeyManageProps) {
-
+function PasskeyManager() {
+    const { username } = useParams<{ username: string }>();
     const [Passkey, setPasskey] = useState<Passkey[]>([])
     const [isLoading, setIsLoading] = useState(true)
-    const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
-
-    useEffect(() => {
-        fetch_user_passkeys();
-    }, []);
+    const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });    
     
     // Fetch users passkeys 
-    const fetch_user_passkeys = async () => {
+    const fetch_user_passkeys = useCallback(async () => {
         setIsLoading(true)
         try {
-            const response = await fetch("https://localhost:5001/user/passkeys", {
+            const response = await fetch("http://localhost:5001/user/passkeys", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username}),
@@ -42,7 +35,13 @@ function PasskeyManager({username} : PasskeyManageProps) {
         } finally {
             setIsLoading(false)
         }
-    };
+    }, [username]);
+
+    useEffect(() => {
+        if (username) {
+            fetch_user_passkeys();
+        }
+    }, [username, fetch_user_passkeys]);
 
     const delete_user_passkey = async (passkeyId:number) => {
         const confirmed = confirm("Are you sure you would like to delete this passkey?")
@@ -52,23 +51,22 @@ function PasskeyManager({username} : PasskeyManageProps) {
         }
 
         try {
-            const responce = await fetch(`http://localhost:5001/user/passkeys/${passkeyId}`, {
+            const response = await fetch(`http://localhost:5001/user/passkeys/${passkeyId}`, {
                 method:"DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username}),
             })
 
-            if(!responce.ok){
-                const data = await responce.json()
+            if(!response.ok){
+                const data = await response.json()
                 throw new Error(data.error || "Error deleting selected passkey")
             }
 
-            setStatus({message: "Passkey deleted succesfully", type: "success"})
-            // refresh users passkeys 
+            setStatus({message: "Passkey deleted successfully", type: "success"})
             fetch_user_passkeys()
         } catch(error){
-            console.log('Issue fetching passkeys:', error)
-            setStatus({message: "Error loading passkeys", type: "error"})
+            console.log('Issue deleting passkey:', error)
+            setStatus({message: "Error deleting passkey", type: "error"})
         }
         
     };
@@ -115,7 +113,7 @@ function PasskeyManager({username} : PasskeyManageProps) {
             <div className="card">
                 <div className="icon">🔑</div>
                 <h1>My Passkeys</h1>
-                <p className="subtitle">Manage your registered passkeys</p>
+                <p className="subtitle">Managing passkeys for {username}</p>
 
                 {status.message && (
                     <div className={`status ${status.type}`}>
