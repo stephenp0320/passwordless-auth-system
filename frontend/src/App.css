@@ -1,443 +1,543 @@
 
-.container {
-  min-height: 100vh;
-  width: 100vw;
-  margin: 0;
-  padding: 0;
-  background: #0a0a0a;
-}
-
-.card {
-  background: #0a0a0a;
-  padding: 40px;
-  width: 100%;
-  max-width: 100%;
-  min-height: 100vh;
-  box-shadow: none;
-  border-radius: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.icon {
-  font-size: 48px;
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-h1 {
-  margin: 0 0 8px 0;
-  font-size: 35px;
-  color: #00ff00;
-  text-align: center;
-  font-weight: 600;
-  font-family: 'Courier New', monospace;
-}
-
-h1, .subtitle {
-  width: 100%;
-  max-width: none;
-}
-
-.subtitle {
-  color: #00cc00;
-  text-align: center;
-  margin: 0 0 32px 0;
-  font-size: 16px;
-  font-family: 'Courier New', monospace;
-}
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  width: 100%;
-  max-width: 400px;
-}
-
-input {
-  padding: 14px 16px;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
-  font-size: 16px;
-  transition: border-color 0.2s;
-  outline: none;
-  background: #0a0a0a;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
-}
-
-input::placeholder {
-  color: #006600;
-}
-
-input:focus {
-  border-color: #00ff00;
-  box-shadow: 0 0 10px #00ff0050;
-}
-
-input:disabled {
-  background: #1a1a1a;
-  cursor: not-allowed;
-}
-
-.buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-button {
-  padding: 14px 24px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  font-family: 'Courier New', monospace;
-}
-
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-.btn-primary {
-  background: #00ff00;
-  color: #0a0a0a;
-  border: 2px solid #00ff00;
-}
-
-.btn-primary:hover:not(:disabled) {
-  background: #0a0a0a;
-  color: #00ff00;
-  box-shadow: 0 0 15px #00ff0050;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: #00ff00;
-  border: 2px solid #00ff00;
-}
-
-.btn-secondary:hover:not(:disabled) {
-  background: #00ff0020;
-  box-shadow: 0 0 15px #00ff0050;
-}
-
-.status {
-  margin-top: 20px;
-  padding: 12px 16px;
-  border-radius: 4px;
-  text-align: center;
-  font-size: 14px;
-  width: 100%;
-  max-width: 400px;
-  font-family: 'Courier New', monospace;
-}
-
-.status.success {
-  background: #00ff0020;
-  color: #00ff00;
-  border: 1px solid #00ff00;
-}
-
-.status.error {
-  background: #ff000020;
-  color: #ff0000;
-  border: 1px solid #ff0000;
-}
-
-.users-table {
-  width: 100%;
-  max-width: 600px;
-  border-collapse: collapse;
-  margin: 20px 0;
-}
-
-.users-table th,
-.users-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #00ff0050;
-  color: #00ff00;
-  font-family: 'Courier New', monospace;
-}
-
-.users-table th {
-  background: #0a0a0a;
-  font-weight: 600;
-  border-bottom: 2px solid #00ff00;
-}
-
-.users-table tr:hover {
-  background: #00ff0010;
-}
-
-.btn-revoke {
-  background: transparent;
-  color: #ff0000;
-  border: 2px solid #ff0000;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  font-family: 'Courier New', monospace;
-}
-
-.btn-revoke:hover {
-  background: #ff000020;
-  box-shadow: 0 0 10px #ff000050;
-}
-
-.btn-refresh {
-  width: 100%;
-  max-width: 400px;
-  padding: 12px;
-  background: transparent;
-  color: #00ff00;
-  border: 2px solid #00ff00;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  margin-top: 10px;
-  font-family: 'Courier New', monospace;
-}
-
-.btn-refresh:hover {
-  background: #00ff0020;
-  box-shadow: 0 0 15px #00ff0050;
-}
-
-.loading {
-  text-align: center;
-  color: #00ff00;
-  padding: 20px;
-  font-family: 'Courier New', monospace;
-}
-
-.recovery-link {
-  color: #00cc00;
-  font-family: 'Courier New', monospace;
-}
-
-.recovery-link a {
-  color: #00ff00;
-  text-decoration: none;
-}
-
-.recovery-link a:hover {
-  text-decoration: underline;
-  text-shadow: 0 0 10px #00ff00;
-}
-
-.live-log-container {
-  background: rgba(0, 0, 0, 0.8);
-  border: 1px solid #00ff00;
-  border-radius: 8px;
-  font-family: 'Courier New', monospace;
-  overflow: hidden;
-  height: 300px;
-  display: flex;
-  flex-direction: column;
-}
-
-.live-log-header {
-  background: rgba(0, 255, 0, 0.1);
-  padding: 10px 15px;
-  border-bottom: 1px solid #00ff00;
-  color: #00ff00;
-  font-weight: bold;
-  font-size: 14px;
-}
-
-.terminal-icon {
-  margin-right: 8px;
-}
-
-.live-log-content {
-  padding: 15px;
-  overflow-y: auto;
-  flex: 1;
-  font-size: 13px;
-}
-
-.log-entry {
-  margin-bottom: 8px;
-  display: flex;
-  gap: 8px;
-  line-height: 1.4;
-}
-
-.log-timestamp {
-  color: #666;
-  font-size: 11px;
-}
-
-.log-prefix {
-  color: #00ff00;
-  font-weight: bold;
-}
-
-.log-message {
-  color: #00ff00;
-}
-
-.log-entry.success .log-message {
-  color: #00ff00;
-}
-
-.log-entry.error .log-message {
-  color: #ff4444;
-}
-
-.log-entry.waiting .log-message {
-  color: #ffaa00;
-}
-
-/* Scrollbar styling */
-.live-log-content::-webkit-scrollbar {
-  width: 6px;
-}
-
-.live-log-content::-webkit-scrollbar-track {
-  background: #111;
-}
-
-.live-log-content::-webkit-scrollbar-thumb {
-  background: #00ff00;
-  border-radius: 3px;
-}
-
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.card-wide {
-  background: rgba(0, 0, 0, 0.8);
-  border: 2px solid #00ff00;
-  border-radius: 12px;
-  padding: 50px;
-  width: 95vw;
-  max-width: 2000px;
-  box-shadow: 0 0 100px rgba(0, 255, 0, 0.3);
-}
-
-.card-header {
-  text-align: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #00ff0044;
-  padding-bottom: 15px;
-}
-
-.card-header h1 {
-  color: #00ff00;
-  margin: 10px 0 5px 0;
-}
-
-.card-header .subtitle {
-  color: #00ff00;
-  opacity: 0.7;
-  margin: 0;
-}
-
-.card-header .icon {
-  font-size: 2.5rem;
-}
-
-.card-body {
-  display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 15px;
-  min-height: 400px;
-}
-
-.panel {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid #00ff00;
-  border-radius: 8px;
-  padding: 15px;
-}
-
-.education-panel h3 {
-  color: #00ff00;
-  margin-top: 0;
-  font-size: 1rem;
-}
-
-.education-panel p {
-  color: #00ff00;
-  opacity: 0.8;
-  font-size: 0.9rem;
-}
-
-/* Auth Panel */
-.auth-panel {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.auth-panel .form {
-  width: 100%;
-}
-
-.auth-panel input {
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.auth-panel .buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.auth-panel .recovery-link {
-  text-align: center;
-  margin-bottom: 15px;
-  color: #00ff00;
-  font-size: 0.85rem;
-}
-
-.auth-panel .recovery-link a {
-  color: #00ff00;
-}
-
-
-.log-panel {
-  padding: 0;
-  overflow: hidden;
-}
-
-.log-panel .live-log-container {
-  height: 100%;
-  border: none;
-  border-radius: 8px;
-}
-
-
-@media (max-width: 900px) {
+/* Dark theme with vibrant colors and a terminal-inspired design */
+/* https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Selectors/:root */
+   :root, 
+   [data-theme="green"] {
+     --bg-primary: #0a0a0a;
+     --bg-secondary: rgba(0, 0, 0, 0.8);
+     --bg-card: rgba(0, 0, 0, 0.6);
+     --text-primary: #00ff00;
+     --text-secondary: #00cc00;
+     --text-muted: #006600;
+     --border-color: #00ff00;
+     --btn-primary-bg: #00ff00;
+     --btn-primary-text: #0a0a0a;
+     --btn-hover-bg: rgba(0, 255, 0, 0.1);
+     --shadow-color: rgba(0, 255, 0, 0.3);
+     --error-color: #ff4444;
+     --warning-color: #ffaa00;
+   }
+   /* amber theme with vibrant colors and a terminal-inspired design */
+   [data-theme="amber"] {
+     --bg-primary: #0d0c0a;
+     --bg-secondary: rgba(13, 12, 10, 0.9);
+     --bg-card: rgba(21, 19, 16, 0.8);
+     --text-primary: #ffb000;
+     --text-secondary: #cc8c00;
+     --text-muted: #665800;
+     --border-color: #ffb000;
+     --btn-primary-bg: #ffb000;
+     --btn-primary-text: #0d0c0a;
+     --btn-hover-bg: rgba(255, 176, 0, 0.1);
+     --shadow-color: rgba(255, 176, 0, 0.3);
+     --error-color: #ff4444;
+     --warning-color: #ff6600;
+   }
+   /* cyan theme with vibrant colors and a terminal-inspired design */
+   [data-theme="cyan"] {
+     --bg-primary: #0a0a0f;
+     --bg-secondary: rgba(10, 10, 15, 0.9);
+     --bg-card: rgba(16, 16, 24, 0.8);
+     --text-primary: #00ffff;
+     --text-secondary: #00cccc;
+     --text-muted: #006666;
+     --border-color: #00ffff;
+     --btn-primary-bg: #00ffff;
+     --btn-primary-text: #0a0a0f;
+     --btn-hover-bg: rgba(0, 255, 255, 0.1);
+     --shadow-color: rgba(0, 255, 255, 0.3);
+     --error-color: #ff4444;
+     --warning-color: #ffaa00;
+   }
+   /* red theme with vibrant colors and a terminal-inspired design */
+   [data-theme="red"] {
+     --bg-primary: #0a0a0a;
+     --bg-secondary: rgba(10, 10, 10, 0.9);
+     --bg-card: rgba(17, 17, 17, 0.8);
+     --text-primary: #ff3333;
+     --text-secondary: #cc2222;
+     --text-muted: #661111;
+     --border-color: #ff3333;
+     --btn-primary-bg: #ff3333;
+     --btn-primary-text: #0a0a0a;
+     --btn-hover-bg: rgba(255, 51, 51, 0.1);
+     --shadow-color: rgba(255, 51, 51, 0.3);
+     --error-color: #ff6666;
+     --warning-color: #ffaa00;
+   }
+   /* purple theme with vibrant colors and a terminal-inspired design */
+   [data-theme="purple"] {
+     --bg-primary: #0a0a10;
+     --bg-secondary: rgba(10, 10, 16, 0.9);
+     --bg-card: rgba(18, 18, 26, 0.8);
+     --text-primary: #bf00ff;
+     --text-secondary: #9900cc;
+     --text-muted: #4d0066;
+     --border-color: #bf00ff;
+     --btn-primary-bg: #bf00ff;
+     --btn-primary-text: #0a0a10;
+     --btn-hover-bg: rgba(191, 0, 255, 0.1);
+     --shadow-color: rgba(191, 0, 255, 0.3);
+     --error-color: #ff4444;
+     --warning-color: #ffaa00;
+   }
+/* light theme with a clean and modern design */
+   [data-theme="light"] {
+    --bg-primary: #f5f5f5;
+    --bg-secondary: #ffffff;
+    --bg-card: #ffffff;
+    --text-primary: #1a1a1a;
+    --text-secondary: #444444;
+    --text-muted: #888888;
+    --border-color: #333333;
+    --btn-primary-bg: #1a1a1a;
+    --btn-primary-text: #ffffff;
+    --btn-hover-bg: rgba(0, 0, 0, 0.05);
+    --shadow-color: rgba(0, 0, 0, 0.15);
+    --error-color: #dc2626;
+    --warning-color: #f59e0b;
+  }
+  
+  /* Global styles */
+  * {
+    box-sizing: border-box;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Reset and base styles */
+  body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-primary);
+    font-family: 'Courier New', monospace;
+  }
+  
+  /* Center the card and set a max width for larger screens */
+  .container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    background: var(--bg-primary);
+  }
+  
+  /* Card styles with a terminal-inspired design */
+  .card-wide {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    padding: 50px;
+    width: 95vw;
+    max-width: 1400px;
+    box-shadow: 0 0 60px var(--shadow-color);
+  }
+  
+   /* card styles with a terminal-inspired design */
+  .card-header {
+    text-align: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+    opacity: 0.9;
+  }
+  
+  /* Use a larger icon size for the card header */
+  .card-header .icon {
+    font-size: 2.5rem;
+  }
+  
+  /* grid layout for the card body to create three distinct panels */
   .card-body {
-    grid-template-columns: 1fr;
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 20px;
+    min-height: 400px;
+  }
+
+
+  /* Typography and panel styles */
+  h1 {
+    margin: 0 0 8px 0;
+    font-size: 35px;
+    color: var(--text-primary);
+    text-align: center;
+    font-weight: 600;
   }
   
+
+  /* subtitle style to complement the main title */
+  .subtitle {
+    color: var(--text-secondary);
+    text-align: center;
+    margin: 0 0 32px 0;
+    font-size: 16px;
+  }
+
+  /* panel styles with a terminal-inspired design */
+  .panel {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 15px;
+  }
+  
+  /* education panel styles with a terminal-inspired design */
+  .education-panel h3 {
+    color: var(--text-primary);
+    margin-top: 0;
+    font-size: 1rem;
+  }
+  
+  /* education panel paragraph styles with a terminal-inspired design */ */
+  .education-panel p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  
+  /* auth panel styles with a terminal-inspired design */
   .auth-panel {
-    order: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
   
-  .education-panel {
-    order: 2;
+  /* recovery link styles with a terminal-inspired design */
+  .auth-panel .recovery-link {
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 0.85rem;
   }
   
+   /* log panel styles with a terminal-inspired design */
   .log-panel {
-    order: 3;
+    padding: 0;
+    overflow: hidden;
   }
-}
+  /* form styles with a terminal-inspired design */ 
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+    max-width: 400px;
+  }
+
+  /* input styles with a terminal-inspired design */
+  input {
+    padding: 14px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    width: 100%;
+  }
+  /* placeholder styles with a terminal-inspired design */
+  input::placeholder {
+    color: var(--text-muted);
+  }
+  /* input focus styles with a terminal-inspired design */
+  input:focus {
+    box-shadow: 0 0 10px var(--shadow-color);
+  }
+  /* input disabled styles with a terminal-inspired design */
+  input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  /* button styles with a terminal-inspired design */
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  /* primary button styles with a terminal-inspired design */
+  button {
+    padding: 14px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Courier New', monospace;
+  }
+  /* disabled button styles with a terminal-inspired design */
+  button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  /* primary button styles with a terminal-inspired design */
+  .btn-primary {
+    background: var(--btn-primary-bg);
+    color: var(--btn-primary-text);
+    border: 2px solid var(--border-color);
+  }
+  /* primary button hover styles with a terminal-inspired design */
+  .btn-primary:hover:not(:disabled) {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    box-shadow: 0 0 15px var(--shadow-color);
+  }
+  /* secondary button styles with a terminal-inspired design */
+  .btn-secondary {
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+  }
+  /* secondary button hover styles with a terminal-inspired design */
+  .btn-secondary:hover:not(:disabled) {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 15px var(--shadow-color);
+  }
+  /* revoke button styles with a terminal-inspired design */
+  .btn-revoke {
+    background: transparent;
+    color: var(--error-color);
+    border: 2px solid var(--error-color);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+  /* revoke button hover styles with a terminal-inspired design */
+  .btn-revoke:hover {
+    background: rgba(255, 0, 0, 0.1);
+    box-shadow: 0 0 10px var(--error-color);
+  }
+  /* refresh button styles with a terminal-inspired design */
+  .btn-refresh {
+    width: 100%;
+    max-width: 400px;
+    padding: 12px;
+    background: transparent;
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+  /* refresh button hover styles with a terminal-inspired design */
+  .btn-refresh:hover {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 15px var(--shadow-color);
+  }
+  /* theme toggle button styles with a terminal-inspired design */
+  .theme-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  /* theme toggle button hover styles with a terminal-inspired design */
+  .theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 20px var(--shadow-color);
+  }
+/* status message styles with a terminal-inspired design */
+  .status {
+    margin-top: 20px;
+    padding: 12px 16px;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    width: 100%;
+    max-width: 400px;
+  }
+  /* success status styles with a terminal-inspired design */
+  .status.success {
+    background: var(--btn-hover-bg);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+  /* error status styles with a terminal-inspired design */
+  .status.error {
+    background: rgba(255, 0, 0, 0.1);
+    color: var(--error-color);
+    border: 1px solid var(--error-color);
+  }
+/* log panel styles with a terminal-inspired design */
+  .live-log-container {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 100%;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+  }
+  /* log panel header styles with a terminal-inspired design */
+  .live-log-header {
+    background: var(--btn-hover-bg);
+    padding: 10px 15px;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-weight: bold;
+    font-size: 14px;
+  }
+  /* log panel header icon styles with a terminal-inspired design */
+  .terminal-icon {
+    margin-right: 8px;
+  }
+  /* log panel content styles with a terminal-inspired design */
+  .live-log-content {
+    padding: 15px;
+    overflow-y: auto;
+    flex: 1;
+    font-size: 13px;
+  }
+  /* log entry styles with a terminal-inspired design */
+  .log-entry {
+    margin-bottom: 8px;
+    display: flex;
+    gap: 8px;
+    line-height: 1.4;
+    animation: fadeIn 0.3s ease;
+  }
+  /* log entry fade-in animation with a terminal-inspired design */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateX(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+  /* log timestamp styles with a terminal-inspired design */
+  .log-timestamp {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  /* log prefix styles with a terminal-inspired design */
+  .log-prefix {
+    color: var(--text-primary);
+    font-weight: bold;
+  }
+  /* log message styles with a terminal-inspired design */
+  .log-message {
+    color: var(--text-primary);
+  }
+  /* log entry status styles with a terminal-inspired design */
+  .log-entry.success .log-message {
+    color: var(--text-primary);
+  }
+  /* log entry error styles with a terminal-inspired design */
+  .log-entry.error .log-message {
+    color: var(--error-color);
+  }
+  /* log entry waiting styles with a terminal-inspired design */
+  .log-entry.waiting .log-message {
+    color: var(--warning-color);
+  }
+  
+  /* custom scrollbar styles for the log panel with a terminal-inspired design */
+  .live-log-content::-webkit-scrollbar {
+    width: 6px;
+  }
+  /* scrollbar track styles with a terminal-inspired design */
+  .live-log-content::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+  /* scrollbar thumb styles with a terminal-inspired design */
+  .live-log-content::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 3px;
+  }
+  /* scrollbar thumb hover styles with a terminal-inspired design */
+  .users-table {
+    width: 100%;
+    max-width: 600px;
+    border-collapse: collapse;
+    margin: 20px 0;
+  }
+  /* users table styles with a terminal-inspired design */
+  .users-table th,
+  .users-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+  }
+  /* users table header styles with a terminal-inspired design */
+  .users-table th {
+    background: var(--bg-card);
+    font-weight: 600;
+    border-bottom: 2px solid var(--border-color);
+  }
+  /* users table row hover styles with a terminal-inspired design */
+  .users-table tr:hover {
+    background: var(--btn-hover-bg);
+  }
+  /* revoke button styles in users table with a terminal-inspired design */
+  .recovery-link {
+    color: var(--text-secondary);
+  }
+  /* recovery link styles with a terminal-inspired design */
+  .recovery-link a {
+    color: var(--text-primary);
+    text-decoration: none;
+  }
+  /* recovery link hover styles with a terminal-inspired design */
+  .recovery-link a:hover {
+    text-decoration: underline;
+    text-shadow: 0 0 10px var(--shadow-color);
+  }
+  /* loading state styles with a terminal-inspired design */
+  .loading {
+    text-align: center;
+    color: var(--text-primary);
+    padding: 20px;
+  }
+  /* responsive styles for smaller screens with a terminal-inspired design */
+  @media (max-width: 1024px) {
+    .card-body {
+      grid-template-columns: 1fr;
+    }
+    /* reorder panels for better flow on smaller screens with a terminal-inspired design */
+    .auth-panel {
+      order: 1;
+    }
+    /* education panel styles with a terminal-inspired design */
+    .education-panel {
+      order: 2;
+    }
+    /* log panel styles with a terminal-inspired design */
+    .log-panel {
+      order: 3;
+      min-height: 300px;
+    }
+    /* adjust card padding for smaller screens with a terminal-inspired design */
+    .card-wide {
+      padding: 20px;
+    }
+  }
+  /* https://www.w3schools.com/cssref/atrule_media.php */
+  /* further responsive styles for mobile devices with a terminal-inspired design */
+  @media (max-width: 600px) {
+    h1 {
+      font-size: 24px;
+    }
+    
+    /* adjust subtitle font size for mobile with a terminal-inspired design */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+  }
