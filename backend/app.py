@@ -56,10 +56,10 @@ def load_mds():
         response = reqs.get("https://mds3.fidoalliance.org/")
         if response.ok:
             mds = parse_blob(response.content, trust_root_bytes)
-            print(f"Loaded fido mds no. times: ${len(mds)}")
+            print(f"Loaded fido mds no. times: {len(mds)}")
             return MdsAttestationVerifier(mds)
     except Exception as e:
-        print(f"Error loading mds: ${e}")
+        print(f"Error loading mds: {e}")
     return None
         
 @app.after_request
