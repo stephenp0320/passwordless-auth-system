@@ -30,7 +30,7 @@ const ThemeSelector = () => {
   // Render the theme selector button and dropdown
   return (
     // Use a ref to detect clicks outside the component for closing the dropdown
-    <div className="theme-selector">
+    <div className="theme-selector" ref={ref}>
       <button 
         className="theme-toggle-btn"
         onClick={() => setIsOpen(!isOpen)} 
