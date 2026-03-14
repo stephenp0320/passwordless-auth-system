@@ -1,5 +1,5 @@
 import { startRegistration, startAuthentication, browserSupportsWebAuthnAutofill } from "@simplewebauthn/browser";
-import { useEffect, useState , useCallback, useRef} from 'react';
+import { useEffect, useState , useRef} from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
