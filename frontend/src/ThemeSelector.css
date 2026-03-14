@@ -1,0 +1,119 @@
+/* Theme Selector Component Styles */
+.theme-selector {
+    position: fixed;
+    top: 40px;
+    right: 50px;
+    z-index: 1000;
+    font-family: 'Courier New', monospace;
+  }
+  /* Responsive adjustments */
+  .theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 10px 16px;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    transition: all 0.2s ease;
+  }
+  /* Hover effect for the toggle button */
+  .theme-toggle-btn:hover {
+    box-shadow: 0 0 15px var(--shadow-color);
+  }
+  /* Theme dot preview in the toggle button */
+  .theme-dot-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--current-color);
+    box-shadow: 0 0 8px var(--current-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  /* Theme name and arrow in the toggle button */
+  .theme-name {
+    min-width: 80px;
+  }
+  /* Arrow icon in the toggle button */
+  .theme-arrow {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+  /* Dropdown menu styles */
+  .theme-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: hidden;
+    min-width: 160px;
+    box-shadow: 0 0 20px var(--shadow-color);
+    animation: dropdownFade 0.2s ease;
+  }
+  /* Dropdown fade-in animation */
+  /* https://www.w3schools.com/cssref/atrule_keyframes.php */
+  @keyframes dropdownFade {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  /* Theme option styles */
+  .theme-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+  /* Hover effect for theme options */
+  .theme-option:hover {
+    background: var(--btn-hover-bg);
+  }
+  /* Active theme option styles */
+  .theme-option.active {
+    background: var(--btn-hover-bg);
+  }
+  /* Theme color dot in options */
+  .theme-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--dot-color);
+    box-shadow: 0 0 6px var(--dot-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    flex-shrink: 0;
+  }
+  /* Theme name in options */
+  .theme-option-name {
+    flex: 1;
+  }
+  /* Checkmark for active theme */
+  .theme-check {
+    color: var(--text-primary);
+    font-size: 12px;
+  }
+  
+  /* Light theme dot visibility */
+  .theme-dot-preview,
+  .theme-dot {
+    border: 1px solid rgba(0, 0, 0, 0.2);
+  }
