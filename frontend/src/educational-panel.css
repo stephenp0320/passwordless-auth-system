@@ -1,0 +1,185 @@
+/* Educational Panel Styles */
+.education-panel-content {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+/* Custom scrollbar for education sections */
+  .education-header {
+    /* https://www.w3.org/TR/css-flexbox-1/ */
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+  }
+/* Using a monospaced font for a more technical look */ 
+  .education-header h3 {
+    margin: 0;
+    font-size: 14px;
+    /* https://www.w3.org/TR/css-variables-1/ */
+    color: var(--text-primary);
+    font-family: 'Courier New', monospace;
+  }
+
+/* Using a monospaced font for icons to maintain a consistent style */
+  .education-icon {
+    font-size: 18px;
+  }
+  
+/* Scrollable container for education sections with a custom scrollbar */
+  .education-sections {
+    flex: 1;
+    overflow-y: auto; /* https://www.w3.org/TR/css-overflow-3/ */
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+/* Individual education section styles with hover effects and smooth transitions */
+  .education-section {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+/* Adding a subtle shadow on hover to make the section stand out */
+  .education-section:hover {
+    box-shadow: 0 0 8px var(--shadow-color);
+  }
+/* Highlighting the expanded section with a different border color */
+  .education-section.expanded {
+    border-color: var(--text-primary);
+  }
+/* Section header styles with a monospaced font and interactive hover effects */
+  .section-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    background: var(--bg-card);
+    border: none;
+    cursor: pointer; /* https://www.w3.org/TR/css-ui-4/#cursor */
+    font-family: 'Courier New', monospace;
+    text-align: left;
+    transition: all 0.2s ease; /* https://www.w3.org/TR/css-transitions-1/ */
+  }
+  /* Adding a subtle background change on hover to indicate interactivity */
+  .section-header:hover {
+    background: var(--btn-hover-bg);
+  }
+/* Icon styles for the section header, using a monospaced font for consistency */
+  .section-icon {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Section title styles with a monospaced font and primary text color */
+  .section-title {
+    flex: 1;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-primary);
+  }
+  /* Toggle icon styles for the section header, using a monospaced font and primary text color */
+  .section-toggle {
+    font-size: 16px;
+    font-weight: bold;
+    color: var(--text-primary);
+    width: 20px;
+    text-align: center;
+  }
+  /* Section content styles with padding, background color, and a slide-down animation for smooth expansion */
+  .section-content {
+    padding: 12px;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    animation: slideDown 0.2s ease;
+  }
+  /* Slide-down animation for section content */
+  /* http://www.w3.org/TR/css-animations-1/#keyframes */
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  /* Paragraph styles within the section content */
+  .section-content p {
+    margin: 0 0 8px 0;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--text-secondary);
+    font-family: 'Courier New', monospace;
+  }
+  .section-content p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .section-content p.spacer {
+    height: 6px;
+  }
+
+  .section-content p strong {
+    color: var(--text-primary);
+  }
+  
+  .education-footer {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-color);
+  }
+  
+  /* Learn more link styles with a monospaced font, centered text, and interactive hover effects */
+  .learn-more-link {
+    display: block;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-primary);
+    text-decoration: none;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    font-family: 'Courier New', monospace;
+  }
+  
+  .learn-more-link:hover {
+    background: var(--btn-hover-bg);
+    box-shadow: 0 0 10px var(--shadow-color); /* https://www.w3.org/TR/css-backgrounds-3/#box-shadow */
+
+  }
+  
+
+  .education-sections::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  .education-sections::-webkit-scrollbar-track {
+    background: var(--bg-primary);
+  }
+  
+  .education-sections::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 2px;
+  }
+  
+  /* Responsive adjustments */
+  /* https://www.w3schools.com/css/css3_mediaqueries.asp */
+  @media (max-width: 1024px) {
+    .education-panel-content {
+      padding: 12px;
+    }
+    /* Adjusting font sizes for smaller screens to maintain readability */
+    .section-content p {
+      font-size: 10px;
+    }
+  }
