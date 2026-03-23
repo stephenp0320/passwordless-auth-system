@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import LiveLog, { useLiveLog } from './LiveLog';
 import ThemeSelector from './ThemeSelector';
+import EducationPanel from './educational-panel';
 
 
 // https://simplewebauthn.dev/docs/packages/browser
@@ -295,8 +296,7 @@ function App() {
         
         <div className="card-body">
           <div className="panel education-panel">
-            <h3>📚 Learn About Passkeys</h3>
-            {/* <p></p> */}
+            <EducationPanel />
           </div>
           <div className="panel auth-panel">
         <p className="recovery-link">
