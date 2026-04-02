@@ -208,6 +208,7 @@ function App() {
       navigate('/admin') // naviagtes to the admin screen
     } catch (error) {
       console.error(error)
+      addLog('Login failed. Make sure you are registered.', 'error')
       setStatus({ message: 'Login failed. Make sure you are registered.', type: 'error' })
     } finally {
       setIsLoading(false)
