@@ -44,7 +44,7 @@
   .education-section {
     border: 1px solid var(--border-color);
     border-radius: 6px;
-    overflow: hidden;
+    overflow: visible;
     transition: all 0.2s ease;
   }
 /* Adding a subtle shadow on hover to make the section stand out */
