@@ -148,15 +148,16 @@ body {
 
 /* Use a larger icon size for the card header */
 .card-header .icon {
-  font-size: 2.5rem;
+  font-size: 1.5rem;
 }
 
 /* grid layout for the card body to create three distinct panels */
 .card-body {
   display: grid;
   grid-template-columns: 1fr 1.2fr 1fr;
-  gap: 20px;
-  min-height: 400px;
+  gap: 20px;          
+  height: 500px;
+  overflow: hidden;
 }
 
 
@@ -184,6 +185,10 @@ h1 {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 15px;
+  height: 100%;            /* 🔥 fill grid row */
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;        /* prevent overflow expansion */
 }
 
 /* education panel styles with a terminal-inspired design */
@@ -204,7 +209,7 @@ h1 {
 .auth-panel {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  overflow-y: auto;       
 }
 
 /* recovery link styles with a terminal-inspired design */
@@ -217,7 +222,9 @@ h1 {
 /* log panel styles with a terminal-inspired design */
 .log-panel {
   padding: 0;
-  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 /* form styles with a terminal-inspired design */
@@ -599,7 +606,7 @@ button:disabled {
 .admin-stats {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
   margin: 15px 0;
 }
 
@@ -614,13 +621,13 @@ button:disabled {
 }
 
 .stat-label {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   font-family: 'Courier New', monospace;
 }
 
 .stat-value {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
   color: var(--text-primary);
   font-family: 'Courier New', monospace;
@@ -639,4 +646,15 @@ button:disabled {
 .auth-panel .loading {
   text-align: center;
   padding: 40px;
+}
+
+/* Recovery info panel */
+.recovery-info p {
+margin: 0;
+color: var(--text-secondary);
+font-family: 'Courier New', monospace;
+}
+
+.recovery-info strong {
+color: var(--text-primary);
 }
