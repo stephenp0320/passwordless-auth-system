@@ -185,10 +185,11 @@ h1 {
   border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 15px;
-  height: 100%;            /* 🔥 fill grid row */
+  height: 100%;
   display: flex;
   flex-direction: column;
-  overflow: hidden;        /* prevent overflow expansion */
+  overflow: auto;          
+  min-height: 0;           
 }
 
 /* education panel styles with a terminal-inspired design */
@@ -202,13 +203,14 @@ h1 {
 */ .education-panel p {
   color: var(--text-secondary);
   font-size: 0.9rem;
-  line-height: 1.6;
+  line-height: 1.6; 
 }
 
 /* auth panel styles with a terminal-inspired design */
 .auth-panel {
   display: flex;
   flex-direction: column;
+  align-items: center; 
   overflow-y: auto;       
 }
 
@@ -572,7 +574,8 @@ button:disabled {
 
   /* education panel styles with a terminal-inspired design */
   .education-panel {
-    order: 2;
+    overflow-y: auto;
+    min-height: 0;
   }
 
   /* log panel styles with a terminal-inspired design */
