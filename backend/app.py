@@ -444,6 +444,10 @@ def login_finish():
         credential_id_bytes = websafe_decode(credential["rawId"])
         for cred in user.credentials:
             if cred.credential_id == credential_id_bytes:
+                # validate the sign count to detect cloned authenticators
+                if result.new_sign_count <= cred.sign_count and cred.sign_count > 0:
+                    print(f"WARNING: Possible cloned authenticator for {username}")
+                    return jsonify({"error": "Authenticator may be cloned"}), 401
                 cred.sign_count = result.new_sign_count
                 db.session.commit()
                 break
