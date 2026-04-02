@@ -641,11 +641,22 @@ def login_finish_usernameless():
             "clientExtensionResults": cred.get("clientExtensionResults", {}),
         }
         
-        server.authenticate_complete(
+        result = server.authenticate_complete(
             state,
             credential_data_list,
             authentication_response,
         )
+
+        # Sign count validation to detect cloned authenticators
+        credential_id_bytes = websafe_decode(cred["rawId"])
+        for db_cred in user.credentials:
+            if db_cred.credential_id == credential_id_bytes:
+                if result.new_sign_count <= db_cred.sign_count and db_cred.sign_count > 0:
+                    print(f"WARNING: Possible cloned authenticator for {username}")
+                    return jsonify({"error": "Authenticator may be cloned"}), 401
+                db_cred.sign_count = result.new_sign_count
+                db.session.commit()
+                break
         
         print(f"User {username} authenticated successfully (usernameless)!")
         return jsonify({"status": "authenticated", "username": username})
