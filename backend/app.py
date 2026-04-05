@@ -5,7 +5,6 @@ from fido2.server import Fido2Server
 from fido2.utils import websafe_decode, websafe_encode
 from types import MappingProxyType
 import traceback
-from datetime import datetime
 import secrets
 import hashlib
 from fido2 import cbor
