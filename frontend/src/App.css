@@ -200,7 +200,7 @@ h1 {
 }
 
 /* education panel paragraph styles with a terminal-inspired design */
-*/ .education-panel p {
+.education-panel p {
   color: var(--text-secondary);
   font-size: 0.9rem;
   line-height: 1.6; 
