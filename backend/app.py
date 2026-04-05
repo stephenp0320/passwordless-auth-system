@@ -277,7 +277,6 @@ def register_finish():
         # extract attestation information using cbor 
         attestation_obj = cbor.decode(websafe_decode(credential["response"]["attestationObject"]))
         attestation_fmt = attestation_obj.get("fmt", "none")
-        attestation_stmt = attestation_obj.get("attSmt", {  })
         
         # get the authenticator attestation GUID
         aaguid = auth_data.credential_data.aaguid.hex() if auth_data.credential_data.aaguid else "unknown"
