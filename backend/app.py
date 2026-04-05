@@ -488,7 +488,7 @@ def revoke_credentials():
     try:
         usr = request.json["username"]
         user = User.query.filter_by(username=usr).first()
-        if not usr:
+        if not user:
             return jsonify({"ERROR" : f"{usr} was not found"}), 404
         
         db.session.delete(user)
