@@ -661,3 +661,218 @@ font-family: 'Courier New', monospace;
 .recovery-info strong {
 color: var(--text-primary);
 }
+
+/* Toast container */
+.recovery-toast {
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 0 20px var(--shadow-color), 0 0 40px rgba(0, 0, 0, 0.5);
+  font-family: 'Courier New', monospace;
+}
+
+/* Toast animation */
+.toast-enter {
+  /* Use a slide-in animation for the toast */
+  /* https://www.w3schools.com/cssref/css3_pr_animation.asp */
+  animation: toastSlideIn 0.3s ease-out;
+}
+
+.toast-exit {
+  animation: toastSlideOut 0.3s ease-in forwards;
+}
+/* Keyframes for toast animations with a terminal-inspired design */
+/* https://www.w3schools.com/cssref/atrule_keyframes.php */
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Keyframes for toast exit animation with a terminal-inspired design */
+/* https://www.w3schools.com/cssref/atrule_keyframes.php */
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+}
+
+/* Header with icon and title */
+.recovery-toast-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--text-muted);
+}
+
+/* Icon styles for the toast header */
+.recovery-toast-icon {
+  font-size: 1.5rem;
+}
+
+/* Title styles for the toast header */
+.recovery-toast-title {
+  color: var(--warning-color);
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+
+/* Warning text */
+.recovery-toast-warning {
+  color: var(--text-secondary);
+  font-size: 0.85rem;
+  margin: 0 0 15px 0;
+  line-height: 1.4;
+}
+
+/* Emphasize important parts of the warning text */
+.recovery-toast-warning strong {
+  color: var(--text-primary);
+}
+
+/* Recovery codes grid - 2 columns */
+.recovery-codes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 15px;
+  padding: 12px;
+  background: var(--bg-secondary);
+  border: 1px solid var(--text-muted);
+  border-radius: 4px;
+}
+
+/* Individual code item */
+.recovery-code-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  background: var(--bg-card);
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+/* Hover effect for code items */
+.recovery-code-item:hover {
+  background: var(--btn-hover-bg);
+}
+
+/* Recovery code index and value styles */
+.recovery-code-index {
+  color: var(--text-muted);
+  font-size: 0.75rem;
+  min-width: 18px;
+}
+/* Recovery code value styles */
+.recovery-code-value {
+  color: var(--text-primary);
+  font-size: 0.9rem;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+/* Action buttons container */
+.recovery-toast-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Base button style */
+.recovery-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Copy button */
+.recovery-btn-copy {
+  background: transparent;
+  color: var(--text-primary);
+}
+
+/* Copy button hover effect */
+.recovery-btn-copy:hover {
+  background: var(--btn-hover-bg);
+  box-shadow: 0 0 10px var(--shadow-color);
+}
+
+/* Download button */
+.recovery-btn-download {
+  background: transparent;
+  color: var(--text-primary);
+}
+/* Download button hover effect */
+.recovery-btn-download:hover {
+  background: var(--btn-hover-bg);
+  box-shadow: 0 0 10px var(--shadow-color);
+}
+
+/* Done button - primary action */
+.recovery-btn-done {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border-color: var(--btn-primary-bg);
+}
+/* Done button hover effect */
+.recovery-btn-done:hover {
+  filter: brightness(1.1);
+  box-shadow: 0 0 15px var(--shadow-color);
+}
+
+/* Footer text */
+.recovery-toast-footer {
+  color: var(--error-color);
+  font-size: 0.75rem;
+  text-align: center;
+  margin: 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--text-muted);
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .recovery-toast {
+    max-width: 95vw;
+    padding: 15px;
+  }
+  
+  .recovery-codes-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .recovery-toast-actions {
+    flex-direction: column;
+  }
+  
+  .recovery-btn {
+    width: 100%;
+  }
+}

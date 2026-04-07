@@ -68,25 +68,74 @@ function App() {
       addLog('Server verified credential', 'success')
       addLog(`User ${username} registered successfully!`, 'success')
       const error_message = () => toast.error(res.error || 'Registration failed. Please try again.', { duration: 5000 });
-      const success_message = () => toast.success(
+      const success_message = () => toast.custom(
         (t) => (
-          <div className="toast-container">
-            <strong>Save these recovery codes!</strong>
-            <pre className="toast-codes">
-              {res.recovery_codes.join('\n')}
-            </pre>
-            <div className="toast-buttons">
+          <div className={`recovery-toast ${t.visible ? 'toast-enter' : 'toast-exit'}`}>
+            <div className="recovery-toast-header">
+              <span className="recovery-toast-icon">⚠️</span>
+              <span className="recovery-toast-title">RECOVERY CODES</span>
+            </div>
+
+            {/* warning message about recovery codes */}
+            <p className="recovery-toast-warning">
+              Store these somewhere safe. Each code can only be used <strong>once</strong>.
+            </p>
+            
+            {/* grid of recovery codes with index and code value */}
+            <div className="recovery-codes-grid">
+              {res.recovery_codes.map((code: string, index: number) => (
+                <div key={index} className="recovery-code-item">
+                  <span className="recovery-code-index">{index + 1}.</span>
+                  <code className="recovery-code-value">{code}</code>
+                </div>
+              ))}
+            </div>
+            
+            {/* actions to copy or download the recovery codes, and a done button to dismiss the toast */}
+            <div className="recovery-toast-actions">
               <button 
-                className="toast-copy-btn"
+                className="recovery-btn recovery-btn-copy"
                 onClick={async () => {
                   await navigator.clipboard.writeText(res.recovery_codes.join('\n'));
-                  toast.success('Copied!');
-                }}> Copy </button>
-              <button className="toast-close-btn" onClick={() => toast.dismiss(t.id)}>Close</button>
+                  toast.success('Copied to clipboard!', { duration: 2000 });
+                }}><span>📋</span> Copy</button>
+              
+              {/* download button that creates a text file with the recovery codes and triggers a download */}
+              <button 
+                className="recovery-btn recovery-btn-download"
+                onClick={() => {
+                  // create a downloadable text file with the recovery codes
+                  // https://developer.mozilla.org/en-US/docs/Web/API/Blob
+                  const content = `PASSWORDLESS AUTH - RECOVERY CODES\n${'='.repeat(40)}\nGenerated: ${new Date().toLocaleString()}\nUsername: ${username}\n${'='.repeat(40)}\n\n${res.recovery_codes.map((code: string, i: number) => `${i + 1}. ${code}`).join('\n')}\n\n${'='.repeat(40)}\nKEEP THESE CODES SAFE!\nEach code can only be used once.\n`;
+                  const blob = new Blob([content], { type: 'text/plain' });
+                  const url = URL.createObjectURL(blob);
+                  // create a temporary link to trigger the download
+                  const a = document.createElement('a');
+                  a.href = url;
+                  a.download = `recovery-codes-${username}.txt`;
+                  a.click();
+                  // release the object URL after it is downloaded
+                  // https://developer.mozilla.org/en-US/docs/Web/API/URL/revokeObjectURL
+                  URL.revokeObjectURL(url);
+                  toast.success('Downloaded!', { duration: 2000 });
+                }}><span>💾</span> Download</button>
+              
+              {/* done button to dismiss the toast */}
+              <button 
+                className="recovery-btn recovery-btn-done"
+                // https://react-hot-toast.com/docs/toast#toastdismissid
+                onClick={() => toast.dismiss(t.id)}>Saved
+              </button>
             </div>
+            
+            <p className="recovery-toast-footer">
+              This is the only time these codes will be shown.
+            </p>
           </div>
         ),
-        { duration: 30000 }
+        // infinite duration so it doesn't disappear until user clicks done
+        // https://react-hot-toast.com/docs/toast#toastoptions
+        { duration: Infinity, position: 'top-center' }
       );
 
       // https://react-hot-toast.com/docs
