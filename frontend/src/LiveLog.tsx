@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 
 // Interface to define log structure
 interface LogEntry {
@@ -17,9 +17,8 @@ export const useLiveLog = () => {
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const id_reference = useRef(0);
 
-    // Function to add a new log entry
-    const addLog = (message: string, type: LogEntry["type"] = "info") => {
-        // https://www.w3schools.com/jsref/jsref_tolocaletimestring.asp 
+    // Function to add a new log entry - wrapped in useCallback to prevent re-renders
+    const addLog = useCallback((message: string, type: LogEntry["type"] = "info") => {
         const timestamp = new Date().toLocaleTimeString('en-US', { 
             hour12: false, 
             hour: '2-digit', 
@@ -33,15 +32,16 @@ export const useLiveLog = () => {
             type,
             timestamp
           }]);
-    };
-    // Function to clear all log entries
-    const clearLogs = () => {
+    }, []);
+    
+    // Function to clear all log entries - wrapped in useCallback
+    const clearLogs = useCallback(() => {
         setLogs([]);
         id_reference.current = 0;
-    };
+    }, []);
 
     return { logs, addLog, clearLogs };
-};
+  };
 
 // Component to render the live log entries
 const LiveLog = ({ logs }: LiveLogProps) => {
