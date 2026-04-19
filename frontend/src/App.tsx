@@ -208,7 +208,7 @@ function App() {
       addLog('Signature verified successfully', 'success')
       addLog(`Welcome back, ${username}!`, 'success')
       setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
-      navigate('/admin') // naviagtes to the admin screen
+      navigate(`/passkeys/${username}`) // navigate to user's passkey manager
     } catch (error) {
       console.error(error)
       addLog('Authentication failed', 'error')
@@ -254,7 +254,7 @@ function App() {
       }    
       
       setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
-      navigate('/admin') // naviagtes to the admin screen
+      navigate(`/passkeys/${username}`) // navigate to user's passkey manager
     } catch (error) {
       console.error(error)
       addLog('Login failed. Make sure you are registered.', 'error')
@@ -270,15 +270,10 @@ function App() {
   // https://react.dev/reference/react/useRefs
   useEffect(() => {
     const conditionalLogin = async () => {
-      if (conditionalLoginStarted.current === true) {
-        return;
-      }
-
-      setIsLoading(true)
-      setStatus({ message: '', type: '' })
-      
+      if (conditionalLoginStarted.current === true) return;
+      conditionalLoginStarted.current = true;
+  
       try { 
-        //const available = await PublicKeyCredential.isConditionalMediationAvailable();
         const autofillSupported = await browserSupportsWebAuthnAutofill();
         if (!autofillSupported){
           console.log("Conditional login not supported")
@@ -298,14 +293,15 @@ function App() {
         const options = await response.json();
         console.log("Usernameless login options received:", options);
   
-        //Trigger browser's WebAuthn authentication
-        //https://simplewebauthn.dev/docs/packages/browser#startauthentication
+        // This call waits in the background for user to click the input
         const assertion = await startAuthentication({
           optionsJSON: options.publicKey,
           useBrowserAutofill: true
         });
   
-        // server gets the username from usr_handle
+        // Only set loading AFTER user has interacted with conditional UI
+        setIsLoading(true)
+  
         const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
           method: "POST",
           headers: { "Content-type": "application/json" },
@@ -314,16 +310,16 @@ function App() {
   
         const result = await finishRes.json();
         if (!finishRes.ok){
-          throw new Error(result.error|| 'Login failed')
+          throw new Error(result.error || 'Login failed')
         }    
         
         toast.success(`Welcome back, ${result.username}!`);
-        navigate('/admin') // naviagtes to the admin screen
-      } catch (error) {
-        // still throws an abort error due to new WebAuthn ceromony being started
-        // this aborts the waiting conditionalLogin logic.
-        console.error("Conditional AbortError: ", error)
-        //setStatus({ message: 'Conditional login failed.', type: 'error' })
+        navigate(`/passkeys/${result.username}`)
+      } catch (error: any) {
+        // Silently ignore AbortError (expected when user takes other action)
+        if (error.name !== 'AbortError') {
+          console.error("Conditional login error: ", error)
+        }
       } finally {
         setIsLoading(false)
       }
