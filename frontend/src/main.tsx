@@ -10,7 +10,7 @@ import Recovery from './Recovery.tsx'
 import { ThemeProvider } from './ThemeContext.tsx'
 // admin screen route
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+  // <StrictMode>
     <ThemeProvider>
     <Toaster position="top-center" />
     <BrowserRouter>
@@ -22,5 +22,5 @@ createRoot(document.getElementById('root')!).render(
       </Routes>
     </BrowserRouter>
     </ThemeProvider>
-  </StrictMode>,
+  // </StrictMode>,
 )
