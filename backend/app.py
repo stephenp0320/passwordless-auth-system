@@ -439,14 +439,18 @@ def login_finish():
             authentication_response,
         )
         
+        # Extract sign count from authenticator data
+        auth_data_bytes = websafe_decode(credential["response"]["authenticatorData"])
+        # The sign count is a 32-bit unsigned integer located at bytes 33-36 of the authenticator data
+        new_sign_count = int.from_bytes(auth_data_bytes[33:37], byteorder='big')
+
         credential_id_bytes = websafe_decode(credential["rawId"])
         for cred in user.credentials:
             if cred.credential_id == credential_id_bytes:
-                # validate the sign count to detect cloned authenticators
-                if result.new_sign_count <= cred.sign_count and cred.sign_count > 0:
+                if new_sign_count <= cred.sign_count and cred.sign_count > 0:
                     print(f"WARNING: Possible cloned authenticator for {username}")
                     return jsonify({"error": "Authenticator may be cloned"}), 401
-                cred.sign_count = result.new_sign_count
+                cred.sign_count = new_sign_count
                 db.session.commit()
                 break
         
@@ -646,13 +650,17 @@ def login_finish_usernameless():
         )
 
         # Sign count validation to detect cloned authenticators
+        # Extract sign count from authenticator data (bytes 33-37 are the 32-bit counter)
+        auth_data_bytes = websafe_decode(cred["response"]["authenticatorData"])
+        new_sign_count = int.from_bytes(auth_data_bytes[33:37], byteorder='big')
+
         credential_id_bytes = websafe_decode(cred["rawId"])
         for db_cred in user.credentials:
             if db_cred.credential_id == credential_id_bytes:
-                if result.new_sign_count <= db_cred.sign_count and db_cred.sign_count > 0:
+                if new_sign_count <= db_cred.sign_count and db_cred.sign_count > 0:
                     print(f"WARNING: Possible cloned authenticator for {username}")
                     return jsonify({"error": "Authenticator may be cloned"}), 401
-                db_cred.sign_count = result.new_sign_count
+                db_cred.sign_count = new_sign_count
                 db.session.commit()
                 break
         
