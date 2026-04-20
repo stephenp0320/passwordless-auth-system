@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { startRegistration } from "@simplewebauthn/browser";
 import "./App.css";
 import LiveLog, { useLiveLog } from './LiveLog';
 import ThemeSelector from './ThemeSelector';
@@ -54,7 +55,7 @@ function PasskeyManager() {
             // log details for each passkey
             if (data.passkeys.length > 0) {
                 addLog('', 'info')
-                addLog('► Passkey Details', 'info')
+                addLog('Passkey Details', 'info')
                 data.passkeys.forEach((pk: Passkey, idx: number) => {
                     addLog(`[${idx + 1}] ID: ${pk.credential_id.substring(0, 12)}...`, 'info')
                     addLog(`    Registered: ${pk.registered_at}`, 'info')
@@ -77,6 +78,74 @@ function PasskeyManager() {
             fetch_user_passkeys();
         }
     }, [username, fetch_user_passkeys]);
+
+
+    // Add new passkey for user
+    const add_new_passkey = async (authType: 'platform' | 'cross-platform' = 'platform') => {
+        if (!username) return; 
+        clearLogs()
+        addLog('>>> ADD NEW PASSKEY <<<', 'info')
+        addLog(`User: ${username}`, 'info')
+        addLog(`Authenticator type: ${authType}`, 'info')
+        addLog('POST /register/start', 'info')
+        
+        try {
+            const startResponse = await fetch("http://localhost:5001/register/start", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, authenticator_type: authType }),
+            });
+
+            if (!startResponse.ok) {
+                const data = await startResponse.json();
+                throw new Error(data.error || 'Failed to start registration');
+            }
+            // expect options to be in { publicKey: PublicKeyCredentialCreationOptions }
+            const options = await startResponse.json();
+            addLog('Challenge received from server', 'success')
+            addLog('Waiting for authenticator...', 'waiting')
+
+            const attestation = await startRegistration({
+                optionsJSON: options.publicKey
+            });
+
+            addLog('Authenticator responded', 'success')
+            addLog('POST /register/finish', 'info')
+
+            // send attestation response to server for verification and database storage
+            const finishResponse = await fetch("http://localhost:5001/register/finish", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, credential: attestation }),
+            });
+
+            // handle server response
+            if (!finishResponse.ok) {
+                const data = await finishResponse.json();
+                throw new Error(data.error || 'Registration failed');
+            }
+
+            addLog('Server verified credential', 'success')
+            addLog('>>> ADDITION COMPLETE <<<', 'success')
+            
+            setStatus({ message: "New passkey added successfully", type: "success" })
+            fetch_user_passkeys()
+        } catch (error: any) {
+            console.log('Error adding passkey:', error)
+            // handle common errors with user-friendly messages, log unexpected errors for debugging
+            if (error.name === 'InvalidStateError') {
+                addLog('This authenticator is already registered', 'error')
+                setStatus({ message: "This authenticator is already registered", type: "error" })
+            } else if (error.name === 'NotAllowedError') {
+                addLog('Registration cancelled by user', 'error')
+                setStatus({ message: "Registration cancelled", type: "error" })
+            } else {
+                addLog('>>> ADDITION FAILED <<<', 'error')
+                addLog(`Error: ${error.message || error}`, 'error')
+                setStatus({ message: `Failed to add passkey`, type: "error" })
+            }
+        }
+    };
 
     const delete_user_passkey = async (passkeyId: number, credentialId: string) => {
         const confirmed = confirm("Are you sure you would like to delete this passkey?")
@@ -203,7 +272,9 @@ function PasskeyManager() {
                         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>• Register multiple passkeys for backup </p>
                         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '8px' }}>• You cannot delete your last passkey</p>
                         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '15px' }}>• Keep recovery codes safe</p>
+                        <button className="btn-primary" onClick={() => add_new_passkey('platform')} style={{ marginBottom: '10px' }}>➕ Add New Passkey</button>                        <button className="btn-primary" onClick={() => add_new_passkey('cross-platform')} style={{ marginBottom: '10px' }}>🔑 Add Security Key</button>
                         <button className="btn-refresh" onClick={fetch_user_passkeys} style={{ marginBottom: '10px' }}>Refresh Passkeys</button>
+                        <button onClick={() => navigate('/admin')} className="btn-secondary" style={{ marginBottom: '10px' }}>Admin View</button>
                         <button onClick={() => navigate('/')} className="btn-secondary">Back to Login</button>
                     </div>
 
