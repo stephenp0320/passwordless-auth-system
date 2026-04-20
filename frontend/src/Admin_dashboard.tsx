@@ -156,6 +156,11 @@ function Admin() {
                             <td>{user.username}</td>
                             <td>{user.registered_at}</td>
                             <td>
+                                {/* manage passkeys btn */}
+                                <button className="btn-revoke" onClick={() => navigate(`/passkeys/${user.username}`)}
+                                style={{ 
+                                    marginRight: '5px',color: 'var(--accent-color, #4a90e2)',
+                                    borderColor: 'var(--accent-color, #4a90e2)' }}>Manage</button>
                                 {/* revoke btn */}
                                 <button className="btn-revoke" onClick={() => revoke_credential(user.username)}>
                                     Revoke
