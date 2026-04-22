@@ -239,7 +239,7 @@ function App() {
 
       //Trigger browser's WebAuthn authentication
       //https://simplewebauthn.dev/docs/packages/browser#startauthentication
-      const assertion = await startAuthentication(options.publicKey);
+      const assertion = await startAuthentication({optionsJSON: options.publicKey});
 
       // server gets the username from usr_handle
       const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
@@ -253,8 +253,12 @@ function App() {
         throw new Error(result.error|| 'Login failed')
       }    
       
-      setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
-      navigate(`/passkeys/${username}`) // navigate to user's passkey manager
+      // toast and log success 
+      toast.success(`Welcome back, ${result.username}!`);
+      setStatus({ message: `Welcome back, ${result.username}!`, type: 'success' })
+      // navigate to passkey manager for the returned username
+      navigate(`/passkeys/${result.username}`)
+
     } catch (error) {
       console.error(error)
       addLog('Login failed. Make sure you are registered.', 'error')
