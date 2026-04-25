@@ -20,7 +20,8 @@ function PasskeyManager() {
     const [status, setStatus] = useState<{ message: string; type: 'success' | 'error' | '' }>({ message: '', type: '' });
     const navigate = useNavigate();
     const { logs, addLog, clearLogs } = useLiveLog();
-    
+    const API_BASE = `${window.location.protocol}//${window.location.hostname}:5001`;
+
     // Fetch users passkeys 
     const fetch_user_passkeys = useCallback(async () => {
         setIsLoading(true)
@@ -33,7 +34,7 @@ function PasskeyManager() {
         addLog('Sending request...', 'waiting')
         
         try {
-            const response = await fetch("http://localhost:5001/user/passkeys", {
+            const response = await fetch(`${API_BASE}/user/passkeys`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username }),
@@ -90,7 +91,7 @@ function PasskeyManager() {
         addLog('POST /register/start', 'info')
         
         try {
-            const startResponse = await fetch("http://localhost:5001/register/start", {
+            const startResponse = await fetch(`${API_BASE}/register/start`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, authenticator_type: authType }),
@@ -113,7 +114,7 @@ function PasskeyManager() {
             addLog('POST /register/finish', 'info')
 
             // send attestation response to server for verification and database storage
-            const finishResponse = await fetch("http://localhost:5001/register/finish", {
+            const finishResponse = await fetch(`${API_BASE}/register/finish`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, credential: attestation }),
@@ -172,7 +173,7 @@ function PasskeyManager() {
         addLog(`DELETE /user/passkeys/${passkeyId}`, 'info')
         addLog('Sending request...', 'waiting')
         try {
-            const response = await fetch(`http://localhost:5001/user/passkeys/${passkeyId}`, {
+            const response = await fetch(`${API_BASE}/user/passkeys/${passkeyId}`, {
                 method:"DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username }),

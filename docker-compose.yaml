@@ -1,6 +1,5 @@
 # https://github.com/docker/multi-container-app/blob/main/compose.yaml
 
-version: '3.8'
 services:
   # PostgreSQL Database
   # https://stackoverflow.com/questions/75246059/create-a-postgres-database-within-a-docker-compose-yml-file
@@ -53,7 +52,7 @@ services:
         condition: service_healthy
     volumes:
       - ./backend:/app
-
+      - ./certs:/certs:ro
   # React Frontend
   # https://blog.teclado.com/run-flask-apps-with-docker-compose/
   frontend:
@@ -66,7 +65,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
-
+      - ./certs:/certs:ro
 volumes:
   postgres_data:
   redis_data:

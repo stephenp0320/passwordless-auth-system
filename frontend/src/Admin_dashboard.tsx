@@ -17,7 +17,8 @@ function Admin() {
     const navigate = useNavigate();
     const { logs, addLog, clearLogs } = useLiveLog(); 
     const hasFetched = useRef(false);
-    
+    const API_BASE = `${window.location.protocol}//${window.location.hostname}:5001`;
+
     // Fetch users on component mount
     // Reference: https://react.dev/reference/react/useEffect
     useEffect(() => {
@@ -37,7 +38,7 @@ function Admin() {
         addLog('Querying PostgreSQL database...', 'waiting');
         
         try {
-            const response = await fetch("http://localhost:5001/admin/users");
+            const response = await fetch(`${API_BASE}/admin/users`);
             // handle non-200 responses
             if (!response.ok) {
                 addLog('Response: 500 Server Error', 'error');
@@ -91,7 +92,7 @@ function Admin() {
         addLog('Connecting to backend API...', 'waiting');
 
         try {
-            const response = await fetch("http://localhost:5001/admin/revoke", {
+            const response = await fetch(`${API_BASE}/admin/revoke`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username }),

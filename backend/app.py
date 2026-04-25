@@ -39,7 +39,17 @@ with app.app_context():
 # CORS (Cross-Origin Resource Sharing) configuration
 # Allows frontend on different port to communicate with backend
 # Reference: https://flask-cors.readthedocs.io/en/latest/
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}})
+
+ALLOWED_ORIGINS = [
+    "http://localhost:5173",
+    "https://localhost:5173",
+    "https://192.168.1.157:5173", 
+    "https://stephens-macbook-pro.local:5173",
+
+]
+CORS(app, resources={r"/*": {"origins": ALLOWED_ORIGINS}}, supports_credentials=True)
+
+
 
 @app.before_request
 def log_request():
@@ -65,10 +75,11 @@ def load_mds():
 def after_request(response):
     #Ensure CORS headers are set on all responses
     #https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
-    
-    response.headers.add('Access-Control-Allow-Origin', 'http://localhost:5173')
-    response.headers.add('Access-Control-Allow-Headers', 'Content-Type,Authorization')
-    response.headers.add('Access-Control-Allow-Methods', 'GET,POST,OPTIONS, DELETE')
+    origin = request.headers.get('Origin')
+    if origin in ALLOWED_ORIGINS:
+        response.headers['Access-Control-Allow-Origin'] = origin
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type,Authorization'
+    response.headers['Access-Control-Allow-Methods'] = 'GET,POST,OPTIONS,DELETE'
     return response
 
 mds_verifier = load_mds()
@@ -77,7 +88,7 @@ mds_verifier = load_mds()
 # https://github.com/Yubico/python-fido2
 #https://developers.yubico.com/python-fido2/
 rp = PublicKeyCredentialRpEntity(
-    id="localhost",
+    id="stephens-macbook-pro.local",
     name="Passwordless authentication"
 )
 
@@ -812,4 +823,12 @@ def get_attestations():
 if __name__ == "__main__":
     # https://flask.palletsprojects.com/en/stable/server/
     # Use port 5001 to avoid conflict with macOS AirPlay on port 5000
-    app.run(host="0.0.0.0", port=5001, debug=True)
+    app.run(
+        host='0.0.0.0',
+        port=5001,
+        ssl_context=(
+            '../certs/localhost+2.pem',
+            '../certs/localhost+2-key.pem'
+        ),
+        debug=True
+    )

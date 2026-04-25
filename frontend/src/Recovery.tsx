@@ -12,6 +12,7 @@ function Recovery() {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { logs, addLog, clearLogs } = useLiveLog();
+  const API_BASE = `${window.location.protocol}//${window.location.hostname}:5001`;
 
   const recoverAccount = async () => {
     if (!username.trim() || !recoveryCode.trim()) {
@@ -32,7 +33,7 @@ function Recovery() {
       addLog('POST /recover', 'info')
       addLog('Connecting to backend API...', 'waiting')
 
-      const response = await fetch("http://localhost:5001/recover", {
+      const response = await fetch(`${API_BASE}/recover`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, recovery_code: recoveryCode }),
@@ -75,7 +76,7 @@ function Recovery() {
       addLog('POST /register/finish', 'info')
       addLog('Sending credential to server...', 'waiting')
 
-      const finishResponse = await fetch("http://localhost:5001/register/finish", {
+      const finishResponse = await fetch(`${API_BASE}/register/finish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, credential: credentials }),
@@ -131,7 +132,7 @@ function Recovery() {
             <h3>📋 Recovery Steps</h3>
             <div style={{ fontSize: '11px', color: 'var(--text-secondary)' }}>
               <p style={{ marginBottom: '10px' }}><strong style={{ color: 'var(--text-primary)' }}>
-                1.</strong> Enter your usernam
+                1.</strong> Enter your username
                 </p>
               <p style={{ marginBottom: '10px' }}><strong style={{ color: 'var(--text-primary)' }}>
                 2.</strong> Enter one of your 8 recovery codes

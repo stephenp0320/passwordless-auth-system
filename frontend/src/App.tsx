@@ -1,5 +1,5 @@
 import { startRegistration, startAuthentication, browserSupportsWebAuthnAutofill } from "@simplewebauthn/browser";
-import { useEffect, useState , useRef} from 'react';
+import { useEffect, useState, useRef } from 'react';
 import './App.css';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
@@ -17,6 +17,7 @@ function App() {
   const conditionalLoginStarted = useRef(false);
   const navigate = useNavigate();
   const { logs, addLog, clearLogs } = useLiveLog();
+  const API_BASE = `${window.location.protocol}//${window.location.hostname}:5001`;
 
 
 
@@ -26,11 +27,11 @@ function App() {
       setStatus({ message: 'Please enter a username', type: 'error' })
       return
     }
-    
+
     setIsLoading(true)
     setStatus({ message: '', type: '' })
-    clearLogs() 
-    
+    clearLogs()
+
     try {
       addLog('Initiating registration ceremony...', 'info')
       addLog(`Username: ${username}`, 'info')
@@ -38,7 +39,7 @@ function App() {
 
       // Fetch registration options from server
       // https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
-      const response = await fetch("http://localhost:5001/register/start", {
+      const response = await fetch(`${API_BASE}/register/start`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ username, authenticator_type: authenticator_type }),
@@ -46,7 +47,7 @@ function App() {
 
       const options = await response.json();
       addLog('Challenge received from server', 'success')
-      addLog(`Challenge: ${options.publicKey.challenge.substring(0, 20)}...`, 'info') 
+      addLog(`Challenge: ${options.publicKey.challenge.substring(0, 20)}...`, 'info')
       addLog('Awaiting authenticator response...', 'waiting')
 
       console.log("Options received:", options);
@@ -54,10 +55,10 @@ function App() {
       // https://simplewebauthn.dev/docs/packages/browser#startregistration
       const credentials = await startRegistration(options.publicKey);
       addLog('Credential created by authenticator', 'success')
-      addLog(`Credential ID: ${credentials.id.substring(0, 16)}...`, 'info') 
+      addLog(`Credential ID: ${credentials.id.substring(0, 16)}...`, 'info')
 
       addLog('Sending credential to server for verification...', 'info')
-      const finish_response = await fetch("http://localhost:5001/register/finish", {
+      const finish_response = await fetch(`${API_BASE}/register/finish`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, credential: credentials }),
@@ -80,7 +81,7 @@ function App() {
             <p className="recovery-toast-warning">
               Store these somewhere safe. Each code can only be used <strong>once</strong>.
             </p>
-            
+
             {/* grid of recovery codes with index and code value */}
             <div className="recovery-codes-grid">
               {res.recovery_codes.map((code: string, index: number) => (
@@ -90,18 +91,18 @@ function App() {
                 </div>
               ))}
             </div>
-            
+
             {/* actions to copy or download the recovery codes, and a done button to dismiss the toast */}
             <div className="recovery-toast-actions">
-              <button 
+              <button
                 className="recovery-btn recovery-btn-copy"
                 onClick={async () => {
                   await navigator.clipboard.writeText(res.recovery_codes.join('\n'));
                   toast.success('Copied to clipboard!', { duration: 2000 });
                 }}><span>📋</span> Copy</button>
-              
+
               {/* download button that creates a text file with the recovery codes and triggers a download */}
-              <button 
+              <button
                 className="recovery-btn recovery-btn-download"
                 onClick={() => {
                   // create a downloadable text file with the recovery codes
@@ -119,15 +120,15 @@ function App() {
                   URL.revokeObjectURL(url);
                   toast.success('Downloaded!', { duration: 2000 });
                 }}><span>💾</span> Download</button>
-              
+
               {/* done button to dismiss the toast */}
-              <button 
+              <button
                 className="recovery-btn recovery-btn-done"
                 // https://react-hot-toast.com/docs/toast#toastdismissid
                 onClick={() => toast.dismiss(t.id)}>Saved
               </button>
             </div>
-            
+
             <p className="recovery-toast-footer">
               This is the only time these codes will be shown.
             </p>
@@ -146,7 +147,7 @@ function App() {
       } else {
         error_message();
       }
-      
+
 
       console.log(`${username} registered with ${res.authenticator_type}`)
       setStatus({ message: 'Registration successful! You can now login.', type: 'success' })
@@ -166,17 +167,17 @@ function App() {
       setStatus({ message: 'Please enter a username', type: 'error' })
       return
     }
-    
+
     setIsLoading(true)
     setStatus({ message: '', type: '' })
     clearLogs()
-    
+
     try {
       addLog('Initiating authentication ceremony...', 'info')
       addLog(`Username: ${username}`, 'info')
 
       // Fetch authentication options from server
-      const response = await fetch("http://localhost:5001/login/start", {
+      const response = await fetch(`${API_BASE}/login/start`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ username }),
@@ -199,12 +200,12 @@ function App() {
 
       // Send assertion to server for verification
       addLog('Verifying signature with server...', 'info')
-      await fetch("http://localhost:5001/login/finish", {
+      await fetch(`${API_BASE}/login/finish`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ username, credential: assertion }),
       });
-      
+
       addLog('Signature verified successfully', 'success')
       addLog(`Welcome back, ${username}!`, 'success')
       setStatus({ message: `Welcome back, ${username}!`, type: 'success' })
@@ -222,9 +223,9 @@ function App() {
   const usernamelessLogin = async () => {
     setIsLoading(true)
     setStatus({ message: '', type: '' })
-    
+
     try { // start the login without the need for username
-      const response = await fetch("http://localhost:5001/login/start/usernameless", {
+      const response = await fetch(`${API_BASE}/login/start/usernameless`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({}),
@@ -239,20 +240,20 @@ function App() {
 
       //Trigger browser's WebAuthn authentication
       //https://simplewebauthn.dev/docs/packages/browser#startauthentication
-      const assertion = await startAuthentication({optionsJSON: options.publicKey});
+      const assertion = await startAuthentication({ optionsJSON: options.publicKey });
 
       // server gets the username from usr_handle
-      const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
+      const finishRes = await fetch(`${API_BASE}/login/finish/usernameless`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ credential: assertion }),
       });
 
       const result = await finishRes.json();
-      if (!finishRes.ok){
-        throw new Error(result.error|| 'Login failed')
-      }    
-      
+      if (!finishRes.ok) {
+        throw new Error(result.error || 'Login failed')
+      }
+
       // toast and log success 
       toast.success(`Welcome back, ${result.username}!`);
       setStatus({ message: `Welcome back, ${result.username}!`, type: 'success' })
@@ -268,55 +269,55 @@ function App() {
     }
   };
 
-   // conditional login flow
-   // https://react.dev/reference/react/useCallback
+  // conditional login flow
+  // https://react.dev/reference/react/useCallback
   // use effect used and useRef to fix bug with multiple calls
   // https://react.dev/reference/react/useRefs
   useEffect(() => {
     const conditionalLogin = async () => {
       if (conditionalLoginStarted.current === true) return;
       conditionalLoginStarted.current = true;
-  
-      try { 
+
+      try {
         const autofillSupported = await browserSupportsWebAuthnAutofill();
-        if (!autofillSupported){
+        if (!autofillSupported) {
           console.log("Conditional login not supported")
           return;
         }
-  
-        const response = await fetch("http://localhost:5001/login/start/usernameless", {
+
+        const response = await fetch(`${API_BASE}/login/start/usernameless`, {
           method: "POST",
           headers: { "Content-type": "application/json" },
           body: JSON.stringify({}),
         });
-  
+
         if (!response.ok) {
           throw new Error('Login failed')
         }
-  
+
         const options = await response.json();
         console.log("Usernameless login options received:", options);
-  
+
         // This call waits in the background for user to click the input
         const assertion = await startAuthentication({
           optionsJSON: options.publicKey,
           useBrowserAutofill: true
         });
-  
+
         // Only set loading AFTER user has interacted with conditional UI
         setIsLoading(true)
-  
-        const finishRes = await fetch("http://localhost:5001/login/finish/usernameless", {
+
+        const finishRes = await fetch(`${API_BASE}/login/finish/usernameless`, {
           method: "POST",
           headers: { "Content-type": "application/json" },
           body: JSON.stringify({ credential: assertion }),
         });
-  
+
         const result = await finishRes.json();
-        if (!finishRes.ok){
+        if (!finishRes.ok) {
           throw new Error(result.error || 'Login failed')
-        }    
-        
+        }
+
         toast.success(`Welcome back, ${result.username}!`);
         navigate(`/passkeys/${result.username}`)
       } catch (error: any) {
@@ -337,54 +338,57 @@ function App() {
     <div className="container">
       {/* Theme selector component to switch between color themes */}
       <ThemeSelector />
-    <div className="card-wide">
-      <div className="card-header">
-        <div className="icon">🔐</div>
-        <h1>Passwordless Auth</h1>
-        <p className="subtitle">Secure authentication using passkeys</p>
-      </div>
-        
+      <div className="card-wide">
+        <div className="card-header">
+          <div className="icon">🔐</div>
+          <h1>Passwordless Auth</h1>
+          <p className="subtitle">Secure authentication using passkeys</p>
+        </div>
+
         <div className="card-body">
           <div className="panel education-panel">
             <EducationPanel />
           </div>
           <div className="panel auth-panel">
-        <p className="recovery-link">
-          Lost your device? <a href="/recover">Recover account</a>
-        </p>
-        <div className="form">
-          <input
-            type="text"
-            placeholder="Enter username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            disabled={isLoading}
-            autoComplete="webauthn"
-          />
-          
-          <div className="buttons">
-            <button onClick={() => register('platform')} disabled={isLoading} className="btn-primary">
-              {isLoading ? 'Please wait...' : 'Register Passkey'}
-            </button>
-            <button onClick={() => register('cross-platform')} disabled={isLoading} className="btn-primary">
-              {isLoading ? 'Please wait...' : 'Register with Security Key'}
-            </button>
-            <button onClick={login} disabled={isLoading} className="btn-secondary">
-              {isLoading ? 'Please wait...' : 'Login with username'}
-            </button>
-            <button onClick={usernamelessLogin} disabled={isLoading} className="btn-secondary">
-              {isLoading ? 'Please wait...' : 'Login with Passkey'}
-            </button>
-          </div>
-        </div>
+            <p className="recovery-link">
+              Lost your device? <a href="/recover">Recover account</a>
+            </p>
+            <div className="form">
+              <input
+                type="text"
+                placeholder="Enter username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isLoading}
+                autoComplete="webauthn"
+              />
+
+              <div className="buttons">
+                <button onClick={() => register('platform')} disabled={isLoading} className="btn-primary">
+                  {isLoading ? 'Please wait...' : 'Register with Passkey'}
+                </button>
+                <button onClick={() => register('cross-platform')} disabled={isLoading} className="btn-primary">
+                  {isLoading ? 'Please wait...' : 'Register with Security Key'}
+                </button>
+                <button onClick={() => register('any')} disabled={isLoading} className="btn-primary">
+                  {isLoading ? 'Please wait...' : 'All authenticator types'}
+                </button>
+                <button onClick={login} disabled={isLoading} className="btn-secondary">
+                  {isLoading ? 'Please wait...' : 'Login with username'}
+                </button>
+                <button onClick={usernamelessLogin} disabled={isLoading} className="btn-secondary">
+                  {isLoading ? 'Please wait...' : 'Login with Passkey'}
+                </button>
+              </div>
+            </div>
 
 
 
-        {status.message && (
-          <div className={`status ${status.type}`}>
-            {status.message}
-          </div>
-        )}
+            {status.message && (
+              <div className={`status ${status.type}`}>
+                {status.message}
+              </div>
+            )}
           </div>
           <div className="panel log-panel">
             <LiveLog logs={logs} />
