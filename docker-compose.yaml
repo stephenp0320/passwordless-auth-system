@@ -10,6 +10,7 @@ services:
       POSTGRES_USER: passkeys
       POSTGRES_PASSWORD: passkeys123
       POSTGRES_DB: passkeys_db
+      TZ: Europe/Dublin
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
